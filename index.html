@@ -3,174 +3,114 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AUMEverse – Empowering Your Future</title>
+  <title>AumVerse</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet"/>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap');
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
     body {
-      font-family: 'Poppins', sans-serif;
-      background-color: #000;
-      color: #f3f3f3;
-      line-height: 1.6;
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: #0a0a0a;
+      color: #eaeaea;
     }
 
     header {
       text-align: center;
-      padding: 30px 20px 10px;
-      background: #000;
-      box-shadow: 0 4px 10px rgba(255, 140, 0, 0.2);
+      background-color: #080808;
+      padding: 30px 20px;
     }
 
     header img {
-      height: 100px;
+      width: 110px;
       margin-bottom: 10px;
     }
 
-    nav {
-      margin-top: 10px;
+    header h1 {
+      color: #f9dc5c;
+      margin: 10px 0;
+      font-size: 28px;
     }
 
-    nav a {
-      color: #f59e0b;
-      text-decoration: none;
-      margin: 0 15px;
-      font-weight: 500;
-      transition: color 0.3s;
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 20px;
     }
 
-    nav a:hover {
-      color: #fff;
-    }
-
-    .hero {
-      padding: 60px 20px;
-      text-align: center;
-    }
-
-    .hero h1 {
-      font-size: 2.5rem;
-      color: #f59e0b;
-      margin-bottom: 15px;
-    }
-
-    .hero p {
-      max-width: 700px;
-      margin: 0 auto;
-      font-size: 1.1rem;
-      color: #ccc;
-    }
-
-    .sections {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      justify-content: center;
-      padding: 40px 20px;
-    }
-
-    .section-box {
-      background: #111;
+    .card {
+      background-color: #121212;
+      padding: 30px;
       border-radius: 12px;
-      padding: 25px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-      width: 100%;
-      max-width: 450px;
+      box-shadow: 0 0 20px rgba(249, 220, 92, 0.05);
+      margin-bottom: 30px;
       transition: transform 0.3s ease;
     }
 
-    .section-box:hover {
+    .card:hover {
       transform: translateY(-5px);
     }
 
-    .section-box h2 {
-      color: #f59e0b;
-      margin-bottom: 10px;
+    .card h2 {
+      color: #f9dc5c;
+      margin-bottom: 15px;
     }
 
-    .section-box p {
-      color: #ddd;
+    .card p {
+      font-size: 16px;
+      line-height: 1.6;
+      color: #ccc;
+    }
+
+    .card a {
+      display: inline-block;
+      margin-top: 15px;
+      text-decoration: none;
+      color: #0a0a0a;
+      background-color: #f9dc5c;
+      padding: 10px 18px;
+      border-radius: 6px;
+      font-weight: bold;
     }
 
     footer {
       text-align: center;
-      padding: 30px 20px;
-      background: #000;
-      font-size: 0.9rem;
-      color: #aaa;
-      border-top: 1px solid #222;
-      margin-top: 30px;
+      padding: 25px 10px;
+      font-size: 14px;
+      background-color: #0a0a0a;
+      color: #888;
     }
 
-    footer p {
-      margin: 5px 0;
-    }
-
-    @media (max-width: 768px) {
-      nav {
-        flex-direction: column;
-        gap: 15px;
-      }
-
-      .hero h1 {
-        font-size: 2rem;
-      }
-
-      .sections {
-        flex-direction: column;
-        align-items: center;
-      }
+    footer a {
+      color: #f9dc5c;
+      text-decoration: none;
     }
   </style>
 </head>
 <body>
 
-  <!-- Header with Logo and Navigation -->
   <header>
-    <img src="https://i.ibb.co/d4ZLDRD0/Screenshot-20250629-190214.jpg" alt="AUMEverse Logo" />
-    <nav>
-      <a href="#home">Home</a>
-      <a href="#career">AUME Career</a>
-      <a href="#designs">AUME Designs</a>
-      <a href="#contact">Contact</a>
-    </nav>
+    <img src="https://i.ibb.co/ZRjTbY2L/file-00000000650861f9bad2ae3237c73eb5.png" alt="AumVerse Logo" />
+    <h1>Welcome to AumVerse</h1>
   </header>
 
-  <!-- Hero Section -->
-  <section class="hero" id="home">
-    <h1>Empowering Your Future</h1>
-    <p>
-      AUMEverse is a parent agency helping individuals build impactful brands and careers through AI-powered guidance and creative design.
-    </p>
-  </section>
+  <div class="container">
 
-  <!-- AUME Career and Designs Sections -->
-  <section class="sections">
-    <div class="section-box" id="career">
+    <div class="card">
       <h2>AUME Career</h2>
-      <p>
-        Acting as your personal career coach, we help you craft industry-relevant resumes, optimize LinkedIn and other professional profiles, and provide 24/7 personalized guidance to shape your dream future.
-      </p>
+      <p>Personalized career guidance, resume building, LinkedIn optimization, and weekly mentorship workshops. Built for students, job seekers, and professionals who feel stuck or lost in their career path.</p>
+      <a href="https://aumeverse.github.io/aume_career_/" target="_blank">Visit</a>
     </div>
 
-    <div class="section-box" id="designs">
-      <h2>AUME Designs</h2>
-      <p>
-        We specialize in building brand identities through custom logos, printable media, motion graphics, and high-impact digital visuals. From concept to design, we translate your vision into bold, stunning visuals.
-      </p>
+    <div class="card">
+      <h2>AUME Design</h2>
+      <p>Professional posters, social media templates, branding kits, and digital solutions for local businesses, creators, and startups. Unique design support to boost your visual identity.</p>
+      <a href="#" target="_blank">Visit</a> <!-- You’ll replace this with the real link later -->
     </div>
-  </section>
 
-  <!-- Footer -->
-  <footer id="contact">
-    <p>© 2025 AUMEverse. All rights reserved.</p>
-    <p>Email: <a href="mailto:infoaume.in@gmail.com" style="color:#f59e0b;">infoaume.in@gmail.com</a></p>
-    <p>Location: Mumbai, India</p>
+  </div>
+
+  <footer>
+    <p>Contact us at: <a href="mailto:infoaume.in@gmail.com">infoaume.in@gmail.com</a></p>
+    <p>© 2025 AumVerse. All rights reserved.</p>
   </footer>
 
 </body>
