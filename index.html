@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>AumVerse</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet"/>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
   <style>
     body {
       margin: 0;
@@ -26,8 +27,14 @@
 
     header h1 {
       color: #f9dc5c;
-      margin: 10px 0;
+      margin: 10px 0 0;
       font-size: 28px;
+    }
+
+    .tagline {
+      color: #888;
+      font-size: 16px;
+      margin-top: 5px;
     }
 
     .container {
@@ -35,14 +42,60 @@
       margin: 40px auto;
       padding: 20px;
     }
+    
+    /* New Section Styling for About Aumeverse */
+    .about-aumeverse-section {
+      max-width: 800px; /* Slightly narrower to stand out */
+      margin: 60px auto;
+      padding: 40px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 20px rgba(249, 220, 92, 0.05);
+      transition: transform 0.3s ease;
+      
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    .about-aumeverse-section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
 
+    .about-aumeverse-section h2 {
+      color: #f9dc5c;
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+    
+    .about-aumeverse-section p {
+      font-size: 18px;
+      line-height: 1.8;
+      color: #ccc;
+    }
+
+    /* Card Styling (Glassmorphism effect) */
     .card {
-      background-color: #121212;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
       padding: 30px;
-      border-radius: 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
       box-shadow: 0 0 20px rgba(249, 220, 92, 0.05);
       margin-bottom: 30px;
-      transition: transform 0.3s ease;
+      
+      /* Fade-in transition properties */
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.6s ease;
+    }
+    
+    /* Class to trigger the fade-in transition */
+    .card.visible {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     .card:hover {
@@ -83,16 +136,43 @@
       color: #f9dc5c;
       text-decoration: none;
     }
+    
+    /* Glow effect for header text */
+    .glow-text {
+      background: linear-gradient(90deg, #FFD700, #FF8C00, #FFD700);
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: glow 3s linear infinite;
+    }
+
+    @keyframes glow {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
   </style>
 </head>
 <body>
 
   <header>
     <img src="https://i.ibb.co/ZRjTbY2L/file-00000000650861f9bad2ae3237c73eb5.png" alt="AumVerse Logo" />
-    <h1>Welcome to AumVerse</h1>
+    <h1 class="glow-text">Welcome to AumVerse</h1>
+    <p class="tagline">One universe infinite possibilities</p>
   </header>
 
   <div class="container">
+
+    <div class="card">
+      <h2>AUMESTACK</h2>
+      <p>AUMESTACK is your growth partner, specializing in scaling existing businesses and empowering new-age startups. We help fantastic ideas transition into the real world with strategic planning, technical execution, and a tactical edge to stand out in today’s competitive market.</p>
+      <a href="https://aumeverse.github.io/Aumestack-/" target="_blank">Visit</a>
+    </div>
+
+    <div class="card">
+      <h2>AUME Design</h2>
+      <p>Professional posters, social media templates, branding kits, and digital solutions for local businesses, creators, and startups. Unique design support to boost your visual identity.</p>
+      <a href="https://aumeverse.github.io/aume_designs/?fbclid=PAQ0xDSwL5k9pleHRuA2FlbQIxMQABp4_CLHPnM1Br02RpEoEFWsGj91b6KNsbyfHs2hTS6y7S56RhDmk9UwoeZbIr_aem_GeWPrxh-63_8yXx47llw7g" target="_blank">Visit</a>
+    </div>
 
     <div class="card">
       <h2>AUME Career</h2>
@@ -100,18 +180,43 @@
       <a href="https://aumeverse.github.io/aume_career_/" target="_blank">Visit</a>
     </div>
 
-    <div class="card">
-      <h2>AUME Design</h2>
-      <p>Professional posters, social media templates, branding kits, and digital solutions for local businesses, creators, and startups. Unique design support to boost your visual identity.</p>
-      <a href="#" target="_blank">Visit</a> <!-- You’ll replace this with the real link later -->
-    </div>
-
   </div>
+
+  <div class="about-aumeverse-section" id="about-aumeverse" data-aos="fade-up">
+    <h2>About</h2>
+    <p>AUMEverse is a unified ecosystem built for bold thinkers — from launching startups and scaling businesses, to crafting standout visuals and empowering careers. Whether you're building a brand or building yourself, this is where growth begins.</p>
+  </div>
+
 
   <footer>
     <p>Contact us at: <a href="mailto:infoaume.in@gmail.com">infoaume.in@gmail.com</a></p>
     <p>© 2025 AumVerse. All rights reserved.</p>
   </footer>
+
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    // Initialize AOS library for animations
+    AOS.init({
+      duration: 1200,
+      once: true,
+    });
+
+    // IntersectionObserver for card animations
+    const cards = document.querySelectorAll('.card');
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    cards.forEach(card => {
+      observer.observe(card);
+    });
+  </script>
 
 </body>
 </html>
