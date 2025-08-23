@@ -1,222 +1,911 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AumVerse</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet"/>
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-      background-color: #0a0a0a;
-      color: #eaeaea;
-    }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>AumVerse</title>
+    <!-- Updated font links for Montserrat -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet"/>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+    <style>
+        /* General body and html styling */
+        body {
+            margin: 0;
+            font-family: 'Montserrat', sans-serif;
+            color: #FFFFFF;
+            background-color: #000000;
+            background-attachment: fixed;
+            position: relative;
+            opacity: 0; /* Initial opacity for fade-in effect */
+            transition: opacity 1s ease-in-out;
+            cursor: default; /* Use the default cursor for better navigation */
+        }
 
-    header {
-      text-align: center;
-      background-color: #080808;
-      padding: 30px 20px;
-    }
+        body.loaded {
+            opacity: 1;
+        }
 
-    header img {
-      width: 110px;
-      margin-bottom: 10px;
-    }
+        html {
+            scroll-behavior: smooth;
+        }
 
-    header h1 {
-      color: #f9dc5c;
-      margin: 10px 0 0;
-      font-size: 28px;
-    }
+        #bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        /* Header Styling */
+        header {
+            text-align: center;
+            background-color: transparent; 
+            padding: 80px 20px 30px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-    .tagline {
-      color: #888;
-      font-size: 16px;
-      margin-top: 5px;
-    }
+        /* CSS for the small spinning logo */
+        .top-spinning-logo {
+            max-width: 170px;
+            height: auto;
+            margin-bottom: -135px;
+            animation: spin 5s linear infinite; /* Spin continuously */
+        }
+        
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        /* CSS for the main brand name logo */
+        .header-logo {
+            max-width: 550px;
+            height: auto;
+            margin-top: 0;
+            /* Added the floating animation */
+            animation: floating 4s ease-in-out infinite; 
+        }
 
-    .container {
-      max-width: 1000px;
-      margin: 40px auto;
-      padding: 20px;
-    }
-    
-    /* New Section Styling for About Aumeverse */
-    .about-aumeverse-section {
-      max-width: 800px; /* Slightly narrower to stand out */
-      margin: 60px auto;
-      padding: 40px;
-      text-align: center;
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(10px);
-      border-radius: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 0 20px rgba(249, 220, 92, 0.05);
-      transition: transform 0.3s ease;
-      
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    .about-aumeverse-section.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
+        /* New keyframes for the floating animation */
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
 
-    .about-aumeverse-section h2 {
-      color: #f9dc5c;
-      margin-bottom: 20px;
-      font-size: 24px;
-    }
-    
-    .about-aumeverse-section p {
-      font-size: 18px;
-      line-height: 1.8;
-      color: #ccc;
-    }
+        .navbar {
+            background-color: transparent;
+            position: sticky;
+            top: 20px;
+            z-index: 1000;
+            padding: 0;
+            box-shadow: none;
+            text-align: center;
+        }
 
-    /* Card Styling (Glassmorphism effect) */
-    .card {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(10px);
-      padding: 30px;
-      border-radius: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 0 20px rgba(249, 220, 92, 0.05);
-      margin-bottom: 30px;
-      
-      /* Fade-in transition properties */
-      opacity: 0;
-      transform: translateY(30px);
-      transition: all 0.6s ease;
-    }
-    
-    /* Class to trigger the fade-in transition */
-    .card.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
+        .navbar ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
 
-    .card:hover {
-      transform: translateY(-5px);
-    }
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            list-style: none;
+            padding: 10px;
+            margin-top: 10px;
+            min-width: 180px;
+            background-color: #111111;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s, opacity 0.3s linear;
+        }
 
-    .card h2 {
-      color: #f9dc5c;
-      margin-bottom: 15px;
-    }
+        .dropdown-menu li {
+            padding: 8px 0;
+            text-align: center;
+        }
+        
+        .dropdown-menu a {
+            padding: 10px 20px;
+            color: #FFFFFF;
+            border-radius: 5px;
+            text-decoration: none;
+            display: block;
+        }
 
-    .card p {
-      font-size: 16px;
-      line-height: 1.6;
-      color: #ccc;
-    }
+        .dropdown:hover .dropdown-menu {
+            visibility: visible;
+            opacity: 1;
+        }
 
-    .card a {
-      display: inline-block;
-      margin-top: 15px;
-      text-decoration: none;
-      color: #0a0a0a;
-      background-color: #f9dc5c;
-      padding: 10px 18px;
-      border-radius: 6px;
-      font-weight: bold;
-    }
+        .navbar a {
+            display: inline-block;
+            padding: 10px 25px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            color: #FFFFFF;
+            background: transparent;
+            transition: color 0.3s ease;
+        }
 
-    footer {
-      text-align: center;
-      padding: 25px 10px;
-      font-size: 14px;
-      background-color: #0a0a0a;
-      color: #888;
-    }
+        .navbar a:hover {
+            color: #3AB4F2;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        
+        .about-aumeverse-section {
+            max-width: 800px;
+            margin: 60px auto;
+            padding: 40px;
+            text-align: left;
+            background-color: rgba(17, 17, 17, 0.7); /* Lighter translucent background */
+            border: 1px solid rgba(34, 34, 34, 0.7);
+            border-radius: 20px;
+            box-shadow: none;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: transform 0.3s ease;
+        }
+        .about-aumeverse-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .about-aumeverse-section p {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #E0E3EB;
+            text-align: left;
+        }
+        
+        .solid-section {
+            text-align: center;
+            margin: 20px auto;
+            padding: 20px;
+            max-width: 800px;
+            background-color: rgba(26, 26, 26, 0.7); /* Lighter translucent background */
+            border-radius: 10px;
+            border: 1px solid rgba(34, 34, 34, 0.7);
+            /* Keeping a floating effect, but removing the tilt */
+            animation: float-section 6s ease-in-out infinite;
+        }
 
-    footer a {
-      color: #f9dc5c;
-      text-decoration: none;
-    }
-    
-    /* Glow effect for header text */
-    .glow-text {
-      background: linear-gradient(90deg, #FFD700, #FF8C00, #FFD700);
-      background-size: 200% 100%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: glow 3s linear infinite;
-    }
+        @keyframes float-section {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
 
-    @keyframes glow {
-      0% { background-position: 0% 50%; }
-      100% { background-position: 100% 50%; }
-    }
-  </style>
+        .solid-section h2 {
+            font-family: 'Montserrat', sans-serif;
+            color: #FFFFFF;
+            margin: 0;
+            font-size: 24px;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .animated-word {
+            display: inline-block;
+            opacity: 0;
+            transform: translateX(100px);
+            transition: transform 0.6s ease-out, opacity 0.6s ease-out;
+        }
+        .solid-section.animate .animated-word {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .container h2 {
+            text-align: left;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .about-aumeverse-section h2 {
+            text-align: left;
+            font-family: 'Montserrat', sans-serif;
+            color: #FFFFFF;
+            margin-bottom: 20px;
+            font-size: 32px;
+            font-weight: 700;
+            min-height: 40px;
+            border-right: 3px solid transparent;
+        }
+        
+        .blinking-cursor {
+            font-weight: 100;
+            border-right: 3px solid #E0E3EB;
+            animation: blink-caret 1s step-end infinite;
+        }
+        
+        @keyframes blink-caret {
+            from, to { border-right-color: transparent }
+            50% { border-right-color: #E0E3EB; }
+        }
+
+        .card {
+            background-color: rgba(17, 17, 17, 0.7); /* Lighter translucent background */
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid rgba(34, 34, 34, 0.7);
+            box-shadow: none;
+            margin-bottom: 30px;
+            opacity: 0;
+            transform: translateX(-100px);
+            transition: all 0.6s ease;
+            /* New floating effect, removing the tilt */
+            animation: float-section 6s ease-in-out infinite;
+        }
+
+        .card:nth-child(even) {
+            transform: translateX(100px);
+        }
+
+        .card.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* New styles for the description dropdown */
+        .card-description {
+            display: none;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+
+        .card-description.show {
+            display: block;
+            max-height: 500px; /* Adjust as needed for the content length */
+        }
+        
+        .card-description p {
+            margin-top: 15px;
+            margin-bottom: 0;
+        }
+
+        /* New styles for the buttons */
+        .know-more-text {
+            font-size: 16px;
+            color: #3AB4F2;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+            font-weight: 700; /* Made the font bold */
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .know-more-text:hover {
+            color: #2553d6;
+        }
+
+        .arrow-icon {
+            margin-left: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .know-more-text.expanded .arrow-icon {
+            transform: rotate(90deg); /* Rotates the arrow on click */
+        }
+
+        .card .visit-btn {
+            display: block;
+            width: fit-content;
+            margin: 15px auto 0;
+            text-decoration: none;
+            color: #FFFFFF;
+            background-color: #3AB4F2;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            text-align: center;
+        }
+        .card .visit-btn:hover {
+            background-color: #2553d6;
+        }
+
+        .form-section {
+            max-width: 600px;
+            margin: 60px auto;
+            padding: 40px;
+            background-color: rgba(17, 17, 17, 0.7); /* Lighter translucent background */
+            border-radius: 20px;
+            border: 1px solid rgba(34, 34, 34, 0.7);
+            box-shadow: none;
+            /* New floating effect, removing the tilt */
+            animation: float-section 6s ease-in-out infinite;
+        }
+
+        .form-section h2 {
+            font-family: 'Montserrat', sans-serif;
+            text-align: center;
+            color: #FFFFFF;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #FFFFFF;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            background-color: #1A1A1A;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            color: #FFFFFF;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #3AB4F2;
+            box-shadow: 0 0 8px rgba(58, 180, 242, 0.5);
+        }
+        
+        /* New class for the form validation message */
+        .form-message {
+            text-align: center;
+            color: #f00;
+            margin-bottom: 15px;
+            display: none; /* Hidden by default */
+        }
+
+        .form-section button {
+            display: block;
+            width: fit-content;
+            margin: 20px auto 0;
+            padding: 12px 24px;
+            background-color: #3AB4F2;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .form-section button:hover {
+            background-color: #2553d6;
+        }
+
+        .required {
+            color: #f00;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px 10px;
+            font-size: 14px;
+            background-color: transparent;
+            color: #A0A0A0;
+        }
+
+        footer a {
+            color: #3AB4F2;
+            text-decoration: none;
+        }
+
+        .whatsapp-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            background-color: #25d366;
+            color: white;
+            border-radius: 50px;
+            text-decoration: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .whatsapp-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .whatsapp-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Pro 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path fill="white" d="M380.9 97.4C339.4 55.9 283.4 33.1 224 33.1c-121.5 0-220 98.5-220 220 0 38.3 9.7 75.8 28.2 109.1L0 480l126.9-33.8c32.4 17.6 69 26.8 107.1 26.8h.1c121.5 0 220-98.5 220-220 0-59.4-22.9-115.4-64.4-156.9zM224 433.8h.1c32.7 0 64.1-8.9 91.6-25.9L403 448l-26.6-96.1c17.5-30.8 27.2-65.4 27.2-101.9 0-97.2-79-176.2-176.2-176.2-97.2 0-176.2 79-176.2 176.2 0 36.5 9.7 71.1 27.2 101.9L45 448l79.4-21.4c27.5 17 58.9 25.9 91.6 25.9zM315.8 261.2c-2.4-1.2-14.7-7.2-17-8.1-2.3-.9-4-.8-5.6 1.1-1.6 1.9-6.3 7.8-7.7 9.4-1.4 1.5-2.8 1.7-5.1 1.2-2.3-.5-9.6-3.5-18.3-11.3-6-5.4-10-12.1-11.2-14-1.2-1.9-1.2-1.8-.1-2.9 1.1-1.2 2.4-2.8 3.5-4.2.8-.8 1.5-1.9 2.3-3.1 1.4-2.3.7-4.4-.1-6-1.1-2.1-10.4-25.1-14.3-34.4-3.8-9.1-7.7-7.9-10.4-7.9-2.3 0-5.1-.3-7.8-.3-2.6 0-7 .9-9.5 3.5-2.5 2.6-9.5 9.3-9.5 22.5 0 13.2 9.7 26.1 11.1 28.1 1.4 2 19.2 30 46.6 42.4 27.4 12.4 27.4 8.3 32.5 7.4 5.1-.8 14.7-6 16.5-12.2 1.8-6.1 1.8-11.3 1.2-12.2-.6-.9-2.3-1.4-4.7-2.6z"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+
+        /* Styling for the new animated heading */
+        .animated-heading-container {
+            text-align: center;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            color: #FFFFFF;
+            font-size: 2rem;
+            margin: 40px auto;
+        }
+        .animated-text {
+            color: #3AB4F2;
+        }
+        .blinking-pipe {
+            animation: blink 1s step-start infinite;
+        }
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        /* Cursor Popping Effect Styling */
+        .cursor-pop {
+            position: fixed;
+            background-color: rgba(58, 180, 242, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: pop-out 0.8s forwards;
+            z-index: 9999;
+        }
+        @keyframes pop-out {
+            0% {
+                transform: scale(0.1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        /*
+            ====================================================
+            RESPONSIVE STYLES
+            ====================================================
+        */
+        @media (max-width: 768px) {
+            header {
+                padding: 40px 10px 20px; /* Reduced padding for mobile */
+            }
+
+            .top-spinning-logo {
+                max-width: 120px; /* Smaller logo for mobile */
+                margin-bottom: -90px; /* Adjusted margin to bring it closer */
+            }
+
+            .header-logo {
+                max-width: 300px; /* Smaller logo for mobile */
+            }
+
+            .navbar ul {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .navbar a {
+                padding: 8px 15px;
+                font-size: 14px;
+            }
+
+            .about-aumeverse-section,
+            .solid-section,
+            .form-section {
+                padding: 20px;
+                margin: 40px 15px;
+            }
+
+            .animated-heading-container {
+                font-size: 1.5rem;
+            }
+        }
+
+    </style>
 </head>
 <body>
+    <canvas id="bg"></canvas>
 
-  <header>
-    <img src="https://i.ibb.co/ZRjTbY2L/file-00000000650861f9bad2ae3237c73eb5.png" alt="AumVerse Logo" />
-    <h1 class="glow-text">Welcome to AumVerse</h1>
-    <p class="tagline">One universe infinite possibilities</p>
-  </header>
+    <!-- Main content container -->
+    <div id="main-content">
+        <header id="home">
+            <a href="#home">
+                <img class="top-spinning-logo" src="https://i.ibb.co/YTQMWQVD/final-logo-02.png" alt="AumVerse Top Logo" />
+            </a>
+            <a href="#home">
+                <img class="header-logo" id="scroll-spin-logo" src="https://i.ibb.co/yFYj2dHt/final-logo-04.png" alt="AumVerse Logo" />
+            </a>
+        </header>
 
-  <div class="container">
+        <nav class="navbar">
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li class="dropdown">
+                    <a href="#services">Services</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#aumestack">AUMESTACK</a></li>
+                        <li><a href="#aume-design">AUME Design</a></li>
+                        <li><a href="#aume-career">AUME Career</a></li>
+                    </ul>
+                </li>
+                <li><a href="#contact-form">Contact</a></li>
+            </ul>
+        </nav>
 
-    <div class="card">
-      <h2>AUMESTACK</h2>
-      <p>AUMESTACK is your growth partner, specializing in scaling existing businesses and empowering new-age startups. We help fantastic ideas transition into the real world with strategic planning, technical execution, and a tactical edge to stand out in today’s competitive market.</p>
-      <a href="https://aumeverse.github.io/Aumestack-/" target="_blank">Visit</a>
+        <!-- New animated heading section -->
+        <div class="animated-heading-container">
+            Want to <span id="dynamic-text" class="animated-text"></span><span class="blinking-pipe">|</span>
+        </div>
+
+        <div class="about-aumeverse-section" id="about" data-aos="fade-up">
+            <h2>About AumeVerse</h2>
+            <p>AumVerse is a radiant beacon in a world of infinite possibilities, empowering bold dreamers, innovators, and creators to redefine the possible. We are a unified ecosystem where ideas ignite, ambitions soar, and growth transforms lives.
+Rooted in the sacred essence of 'Aum,' we were founded to bridge chaos into harmony, nurturing entrepreneurship, creativity, and personal evolution. From launching startups to scaling industries, we craft standout visuals—brand identities, logos, motion graphics, packaging, graphics, and websites—that inspire loyalty and impact.
+More than services, AumVerse is a growth philosophy, fostering collaborative communities where challenges fuel achievements. Join us to unlock your potential—because here, growth is the rhythm of existence.</p>
+        </div>
+
+        <div class="solid-section">
+            <h2>
+                <span class="animated-word" style="transition-delay: 0s;">Explore</span>
+                <span class="animated-word" style="transition-delay: 0.1s;">Our</span>
+                <span class="animated-word" style="transition-delay: 0.2s;">Services</span>
+            </h2>
+        </div>
+
+        <div class="container" id="services">
+            <div class="card" id="aumestack">
+                <h2>AUMESTACK</h2>
+                <!-- Description is now a toggleable element -->
+                <p class="know-more-text">Know More <span class="arrow-icon">&#8594;</span></p>
+                <div class="card-description">
+                    <p>AUMESTACK stands as your dedicated growth partner, expertly guiding bold entrepreneurs and established enterprises through the exhilarating journey of expansion and innovation. Specializing in scaling thriving businesses and igniting the potential of new-age startups, we transform visionary ideas into tangible successes by blending meticulous strategic planning, cutting-edge technical execution, and a sharp tactical advantage designed to outshine competitors in today's fast-paced market. Our approach goes beyond mere advice—we collaborate closely to identify untapped opportunities, streamline operations, mitigate risks, and foster sustainable revenue streams, ensuring your venture not only launches but thrives with resilience and adaptability. Whether you're navigating market challenges, optimizing resources for efficiency, or seeking innovative partnerships to amplify your reach, AUMESTACK empowers you with tailored insights and proven methodologies that drive measurable results, turning ambitious dreams into enduring realities.</p>
+                </div>
+                <a href="https://aumeverse.github.io/Aumestack-/" class="visit-btn" target="_blank">Visit</a>
+            </div>
+
+            <div class="card" id="aume-design">
+                <h2>AUME Design</h2>
+                <p class="know-more-text">Know More <span class="arrow-icon">&#8594;</span></p>
+                <div class="card-description">
+                    <p>Aume Designs emerges as your creative ally, delivering professional posters, versatile social media templates, comprehensive branding kits, and innovative digital solutions tailored for local businesses, ambitious creators, and emerging startups. We specialize in transforming everyday visuals into powerful assets that captivate audiences and elevate your presence, blending artistic flair with strategic insight to craft identities that stand out in a crowded digital landscape. Our unique design support goes beyond the ordinary, offering customized guidance that aligns with your vision, enhances brand cohesion, and drives engagement through eye-catching graphics and user-friendly tools. Whether you're launching a campaign, refreshing your online profile, or building a full visual ecosystem, Aume Designs empowers you with high-quality, adaptable resources that boost your visual identity, foster growth, and leave a lasting impression on your target market.</p>
+                </div>
+                <a href="https://aumeverse.github.io/aume_designs/?fbclid=PAQ0xDSwL5k9pleHRuA2FlbQIxMQABp4_CLHPnM1Br02RpEoEFWsGj91b6KNsbyfHs2hTS6y7S56RhDmk9UwoeZbIr_aem_GeWPrxh-63_8yXx47llw7g" class="visit-btn" target="_blank">Visit</a>
+            </div>
+
+            <div class="card" id="aume-career">
+                <h2>AUME Career</h2>
+                <p class="know-more-text">Know More <span class="arrow-icon">&#8594;</span></p>
+                <div class="card-description">
+                    <p>AumCareer emerges as your compassionate compass in the often winding journey of professional fulfillment, offering personalized career guidance, expert resume building, LinkedIn profile optimization, and interactive weekly mentorship workshops designed to illuminate your path forward. Tailored for ambitious students charting their first steps, dedicated job seekers navigating transitions, and seasoned professionals grappling with stagnation or uncertainty, our services blend insightful one-on-one coaching with practical tools to uncover your unique strengths, refine your personal brand, and align your aspirations with actionable opportunities. Through customized strategies, we help you craft compelling narratives that stand out in competitive markets, foster meaningful networks, and build the confidence needed to seize new roles or pivot directions. Our weekly workshops provide a supportive community space for skill-sharing, goal-setting, and real-world advice from experienced mentors, ensuring you gain not just knowledge but the resilience to thrive. Whether you're rebuilding from a career crossroads or accelerating toward your dream position, AumCareer empowers you to transform feelings of being lost into a clear, purposeful trajectory, unlocking doors to growth and success that feel authentically yours.</p>
+                </div>
+                <a href="https://aumeverse.github.io/aume_career_/" class="visit-btn" target="_blank">Visit</a>
+            </div>
+        </div>
+        
+        <div class="form-section" id="contact-form">
+            <h2 style="color: #FFFFFF;">Get in Touch</h2>
+            <form id="contact-form">
+                <!-- Message for form validation errors -->
+                <p class="form-message" id="validation-message"></p>
+
+                <div class="form-group">
+                    <label for="name" style="color: #FFFFFF;">Name<span class="required">*</span></label>
+                    <input type="text" id="name" name="name" required style="background-color: #1A1A1A; border: 1px solid #333333; color: #FFFFFF;">
+                </div>
+                <div class="form-group">
+                    <label for="email" style="color: #FFFFFF;">Email<span class="required">*</span></label>
+                    <input type="email" id="email" name="email" required style="background-color: #1A1A1A; border: 1px solid #333333; color: #FFFFFF;">
+                </div>
+                <div class="form-group">
+                    <label for="linkedin" style="color: #FFFFFF;">LinkedIn Profile</label>
+                    <input type="text" id="linkedin" name="linkedin" style="background-color: #1A1A1A; border: 1px solid #333333; color: #FFFFFF;">
+                </div>
+                <div class="form-group">
+                    <label for="city" style="color: #FFFFFF;">City<span class="required">*</span></label>
+                    <input type="text" id="city" name="city" required style="background-color: #1A1A1A; border: 1px solid #333333; color: #FFFFFF;">
+                </div>
+                <button type="submit" style="background-color: #3AB4F2; color: #FFFFFF;">Submit</button>
+            </form>
+        </div>
+
+        <footer id="contact">
+            <p style="color: #A0A0A0;">Contact us at: <a href="mailto:infoaume.in@gmail.com" style="color: #3AB4F2;">infoaume.in@gmail.com</a></p>
+            <p style="color: #A0A0A0;">© 2025 AumVerse. All rights reserved.</p>
+        </footer>
+
+        <a href="https://wa.me/919372998318" class="whatsapp-btn" target="_blank">
+            <span class="whatsapp-icon"></span>
+            Any Queries?
+        </a>
     </div>
 
-    <div class="card">
-      <h2>AUME Design</h2>
-      <p>Professional posters, social media templates, branding kits, and digital solutions for local businesses, creators, and startups. Unique design support to boost your visual identity.</p>
-      <a href="https://aumeverse.github.io/aume_designs/?fbclid=PAQ0xDSwL5k9pleHRuA2FlbQIxMQABp4_CLHPnM1Br02RpEoEFWsGj91b6KNsbyfHs2hTS6y7S56RhDmk9UwoeZbIr_aem_GeWPrxh-63_8yXx47llw7g" target="_blank">Visit</a>
-    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // === CURSOR POPPING EFFECT ===
+        document.body.addEventListener('mousemove', (e) => {
+            const popEffect = document.createElement('div');
+            popEffect.className = 'cursor-pop';
+            popEffect.style.left = `${e.clientX}px`;
+            popEffect.style.top = `${e.clientY}px`;
+            popEffect.style.width = '15px';
+            popEffect.style.height = '15px';
+            document.body.appendChild(popEffect);
 
-    <div class="card">
-      <h2>AUME Career</h2>
-      <p>Personalized career guidance, resume building, LinkedIn optimization, and weekly mentorship workshops. Built for students, job seekers, and professionals who feel stuck or lost in their career path.</p>
-      <a href="https://aumeverse.github.io/aume_career_/" target="_blank">Visit</a>
-    </div>
+            setTimeout(() => {
+                popEffect.remove();
+            }, 800); // Matches the animation duration
+        });
 
-  </div>
+        // === SCROLL ANIMATIONS ===
+        // This script handles the AOS library initialization.
+        AOS.init({
+            duration: 1200,
+            once: false,
+        });
 
-  <div class="about-aumeverse-section" id="about-aumeverse" data-aos="fade-up">
-    <h2>About</h2>
-    <p>AUMEverse is a unified ecosystem built for bold thinkers — from launching startups and scaling businesses, to crafting standout visuals and empowering careers. Whether you're building a brand or building yourself, this is where growth begins.</p>
-  </div>
+        // IntersectionObserver for card animations
+        const cards = document.querySelectorAll('.card');
+        const cardObserver = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                } else {
+                    entry.target.classList.remove('visible');
+                }
+            });
+        }, { threshold: 0.1 });
 
+        cards.forEach(card => {
+            cardObserver.observe(card);
+        });
 
-  <footer>
-    <p>Contact us at: <a href="mailto:infoaume.in@gmail.com">infoaume.in@gmail.com</a></p>
-    <p>© 2025 AumVerse. All rights reserved.</p>
-  </footer>
+        // IntersectionObserver for "Explore Our Services" heading
+        const solidSection = document.querySelector('.solid-section');
+        const headingObserver = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate');
+                } else {
+                    entry.target.classList.remove('animate');
+                }
+            });
+        }, { threshold: 0.5 });
 
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-  <script>
-    // Initialize AOS library for animations
-    AOS.init({
-      duration: 1200,
-      once: true,
-    });
-
-    // IntersectionObserver for card animations
-    const cards = document.querySelectorAll('.card');
-
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          observer.unobserve(entry.target);
+        if (solidSection) {
+            headingObserver.observe(solidSection);
         }
-      });
-    }, { threshold: 0.1 });
 
-    cards.forEach(card => {
-      observer.observe(card);
-    });
-  </script>
+        // === CARD DESCRIPTION TOGGLE LOGIC ===
+        document.querySelectorAll('.know-more-text').forEach(item => {
+            item.addEventListener('click', () => {
+                const description = item.nextElementSibling;
+                if (description.classList.contains('show')) {
+                    description.classList.remove('show');
+                    item.classList.remove('expanded');
+                } else {
+                    document.querySelectorAll('.card-description.show').forEach(desc => {
+                        desc.classList.remove('show');
+                        desc.previousElementSibling.classList.remove('expanded');
+                    });
+                    description.classList.add('show');
+                    item.classList.add('expanded');
+                }
+            });
+        });
 
+        // === WHATSAPP FORM SUBMISSION LOGIC ===
+        // Updated to use a custom message box instead of alert()
+        const form = document.getElementById('contact-form');
+        const validationMessage = document.getElementById('validation-message');
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const linkedin = document.getElementById('linkedin').value;
+            const city = document.getElementById('city').value;
+            
+            // Basic form validation check
+            if (!name || !email || !city) {
+                validationMessage.textContent = 'Please fill out all required fields.';
+                validationMessage.style.display = 'block';
+                return;
+            } else {
+                validationMessage.style.display = 'none';
+            }
+
+            const message = `Hello, I'd like to get in touch!\n\nName: ${name}\nEmail: ${email}\nLinkedIn: ${linkedin}\nCity: ${city}`;
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/919372998318?text=${encodedMessage}`;
+
+            window.open(whatsappUrl, '_blank');
+        });
+        
+        // === THREE.js Dotted Background ===
+        window.onload = function() {
+            // Fade in the body once the page and all resources are loaded
+            document.body.classList.add('loaded');
+
+            const canvas = document.getElementById('bg');
+            const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 20;
+
+            const particles = new THREE.BufferGeometry();
+            const particleCount = 5000;
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+
+            const color1 = new THREE.Color(0x111111);
+            const color2 = new THREE.Color(0x222222);
+
+            for (let i = 0; i < particleCount; i++) {
+                positions[i * 3 + 0] = (Math.random() - 0.5) * 200;
+                positions[i * 3 + 1] = (Math.random() - 0.5) * 200;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 200;
+
+                const color = Math.random() > 0.5 ? color1 : color2;
+                colors[i * 3 + 0] = color.r;
+                colors[i * 3 + 1] = color.g;
+                colors[i * 3 + 2] = color.b;
+            }
+
+            particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            particles.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            
+            const particleMaterial = new THREE.PointsMaterial({
+                size: 0.8,
+                vertexColors: true,
+                blending: THREE.AdditiveBlending,
+                transparent: true,
+                opacity: 0.8
+            });
+
+            const particleMesh = new THREE.Points(particles, particleMaterial);
+            scene.add(particleMesh);
+
+            let mouseX = 0, mouseY = 0;
+            const windowHalfX = window.innerWidth / 2;
+            const windowHalfY = window.innerHeight / 2;
+
+            document.addEventListener('mousemove', onDocumentMouseMove, false);
+
+            function onDocumentMouseMove(event) {
+                mouseX = (event.clientX - windowHalfX) * 0.1;
+                mouseY = (event.clientY - windowHalfY) * 0.1;
+            }
+
+            function onWindowResize() {
+                const width = window.innerWidth;
+                const height = window.innerHeight;
+                camera.aspect = width / height;
+                camera.updateProjectionMatrix();
+                renderer.setSize(width, height);
+            }
+            window.addEventListener('resize', onWindowResize, false);
+
+            function animate() {
+                requestAnimationFrame(animate);
+
+                particleMesh.rotation.y += 0.001;
+                particleMesh.rotation.x += 0.0005;
+
+                const positions = particleMesh.geometry.attributes.position.array;
+                for (let i = 0; i < particleCount; i++) {
+                    positions[i * 3 + 0] += 0.01;
+                    if (positions[i * 3 + 0] > 100) {
+                        positions[i * 3 + 0] = -100;
+                    }
+                }
+                particleMesh.geometry.attributes.position.needsUpdate = true;
+                
+                camera.position.x += (mouseX - camera.position.x) * 0.05;
+                camera.position.y += (-mouseY - camera.position.y) * 0.05;
+                camera.lookAt(scene.position);
+                
+                renderer.render(scene, camera);
+            }
+            animate();
+        };
+
+        // === DYNAMIC TYPING EFFECT ===
+        const dynamicText = document.getElementById('dynamic-text');
+        // Corrected phrases for consistent punctuation
+        const phrases = ["build brand??", "grow business??", "build career??"];
+        let phraseIndex = 0;
+        let charIndex = 0;
+        let isTyping = true;
+
+        function type() {
+            const currentPhrase = phrases[phraseIndex];
+            if (isTyping) {
+                if (charIndex < currentPhrase.length) {
+                    dynamicText.textContent += currentPhrase.charAt(charIndex);
+                    charIndex++;
+                    setTimeout(type, 100);
+                } else {
+                    isTyping = false;
+                    setTimeout(erase, 1000);
+                }
+            }
+        }
+
+        function erase() {
+            const currentPhrase = phrases[phraseIndex];
+            if (charIndex > 0) {
+                dynamicText.textContent = currentPhrase.substring(0, charIndex - 1);
+                charIndex--;
+                setTimeout(erase, 50);
+            } else {
+                phraseIndex = (phraseIndex + 1) % phrases.length;
+                isTyping = true;
+                setTimeout(type, 500);
+            }
+        }
+        
+        type();
+        
+        // === SCROLL-BASED ANIMATION LOGIC ===
+        const scrollSpinLogo = document.getElementById('scroll-spin-logo');
+        const spinMultiplier = 0.5; // Controls the speed of the spin.
+
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY;
+            const rotation = scrollY * spinMultiplier;
+            scrollSpinLogo.style.transform = `rotate(${rotation}deg)`;
+        });
+    </script>
 </body>
 </html>
