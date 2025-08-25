@@ -41,7 +41,7 @@
         header {
             text-align: center;
             background-color: transparent; 
-            padding: 80px 20px 30px;
+            padding: 20px 20px 30px; /* Reduced top padding to move the header up */
             position: relative;
             display: flex;
             flex-direction: column;
@@ -50,9 +50,9 @@
 
         /* CSS for the small spinning logo */
         .top-spinning-logo {
-            max-width: 300px; /* Increased size for desktop */
+            max-width: 300px;
             height: auto;
-            margin-bottom: -150px; /* Adjusted to bring it closer to the brand name */
+            margin-bottom: -180px; /* Adjusted to bring it much closer to the brand name */
             animation: spin 5s linear infinite;
         }
         
@@ -67,7 +67,7 @@
         
         /* CSS for the main brand name logo */
         .header-logo {
-            max-width: 750px; /* Increased size for desktop */
+            max-width: 750px;
             height: auto;
             margin-top: 0;
             animation: floating 4s ease-in-out infinite;
@@ -103,9 +103,12 @@
             margin: 0;
             padding: 0;
             display: flex;
-            justify-content: center;
+            justify-content: space-around;
             align-items: center;
             gap: 20px;
+            width: 100%;
+            max-width: 800px;
+            margin: auto;
         }
         
         .dropdown {
@@ -122,7 +125,7 @@
             padding: 10px;
             margin-top: 10px;
             min-width: 180px;
-            background-color: #111111;
+            background-color: rgba(17, 17, 17, 0.9);
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
             visibility: hidden;
@@ -155,12 +158,16 @@
             font-weight: bold;
             font-size: 16px;
             color: #FFFFFF;
-            background: transparent;
-            transition: color 0.3s ease;
+            background: rgba(37, 83, 214, 0.1);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(37, 83, 214, 0.2);
+            border-radius: 50px;
+            transition: all 0.3s ease;
         }
 
         .navbar a:hover {
-            color: #2553d6;
+            color: #FFFFFF;
+            background: rgba(37, 83, 214, 0.5);
         }
         
         .container {
@@ -185,9 +192,16 @@
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
             position: relative;
             overflow: hidden;
-            transition: transform 1s ease-in-out, opacity 1s ease-in-out;
             opacity: 1;
-            transform: none;
+            transform: translateY(0);
+            transition: transform 0.8s ease-in-out, opacity 0.8s ease-in-out;
+            animation: float-section 6s ease-in-out infinite; /* Added floating animation */
+        }
+        
+        @keyframes float-section {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
         }
 
         .page-section h2 {
@@ -209,15 +223,18 @@
         }
 
         .dynamic-text-container {
-            font-size: 16px;
+            font-size: 5vw; /* Responsive font size */
             line-height: 1.6;
             color: #E0E3EB;
             min-height: 25px;
             display: flex;
             align-items: center;
+            justify-content: center;
             text-align: center;
             margin-top: 15px;
             margin-bottom: 15px;
+            font-weight: 700;
+            white-space: nowrap; /* Prevents text from wrapping */
         }
         
         .dynamic-text-container .typewriter-text {
@@ -299,9 +316,33 @@
             background-color: #1a3c93;
         }
 
-        .form-section h2 {
+        .form-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            max-width: 1000px;
+            margin: 60px auto;
+            padding: 40px;
+            background-color: rgba(17, 17, 17, 0.7);
+            border-radius: 20px;
+            border: 1px solid rgba(34, 34, 34, 0.7);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+        
+        .form-section-heading {
             text-align: center;
             margin-bottom: 30px;
+        }
+        
+        .form-section-form {
+            width: 100%;
+        }
+
+        .form-section h2 {
+            text-align: center;
+            margin-bottom: 0;
         }
 
         .form-group {
@@ -412,7 +453,7 @@
             font-family: 'Montserrat', sans-serif;
             font-weight: 700;
             color: #FFFFFF;
-            font-size: 2rem;
+            font-size: 5vw; /* Responsive font size */
             margin: 40px auto;
             position: relative;
         }
@@ -468,35 +509,32 @@
             .navbar ul {
                 flex-direction: column;
                 gap: 10px;
+                justify-content: center;
+                max-width: none;
             }
 
             .navbar a {
                 padding: 8px 15px;
                 font-size: 14px;
             }
-
-            .page-section {
-                min-height: auto;
-                padding: 20px;
-                margin: 40px 15px;
-                transform: none;
-                opacity: 1;
-                animation: none;
-            }
             
-            .page-section.from-left,
-            .page-section:nth-of-type(even) {
-                transform: none;
+            .form-section {
+                flex-direction: column;
+                padding: 20px;
             }
 
-            .section-content,
-            .animated-word {
-                opacity: 1;
-                transform: none;
+            .form-section-heading {
+                text-align: center;
+                padding-right: 0;
             }
 
             .animated-heading-container {
                 font-size: 1.5rem;
+            }
+            
+            .dynamic-text-container {
+                font-size: 1.5rem;
+                white-space: normal;
             }
         }
     </style>
@@ -524,7 +562,7 @@
                     <ul class="dropdown-menu">
                         <li><a href="#aumestack">AUMESTACK</a></li>
                         <li><a href="#aume-design">AUME Design</a></li>
-                        <li><a href="#aume-career">AUME Career</a></li>
+                        <li><a href="#aume-career">AUME CAREER</a></li>
                     </ul>
                 </li>
                 <li><a href="#contact-form">Contact</a></li>
@@ -539,9 +577,7 @@
         <div class="page-section about-aumeverse-section" id="about">
             <div class="section-content">
                 <h2>About AumeVerse</h2>
-                <p>AumVerse is a radiant beacon in a world of infinite possibilities, empowering bold dreamers, innovators, and creators to redefine the possible. We are a unified ecosystem where ideas ignite, ambitions soar, and growth transforms lives.
-Rooted in the sacred essence of 'Aum,' we were founded to bridge chaos into harmony, nurturing entrepreneurship, creativity, and personal evolution. From launching startups to scaling industries, we craft standout visuals—brand identities, logos, motion graphics, packaging, graphics, and websites—that inspire loyalty and impact.
-More than services, AumVerse is a growth philosophy, fostering collaborative communities where challenges fuel achievements. Join us to unlock your potential—because here, growth is the rhythm of existence.</p>
+                <p>At AumVerse, we're dedicated to empowering ambitious dreamers and innovators. We've built an ecosystem where your boldest ideas can ignite and transform into a thriving reality. Our mission is to help you stand out and make an impact, because we believe that growth is the true rhythm of existence.</p>
             </div>
         </div>
 
@@ -559,12 +595,9 @@ More than services, AumVerse is a growth philosophy, fostering collaborative com
             <div class="page-section card" id="aumestack">
                 <div class="section-content">
                     <h2>AUMESTACK</h2>
-                    <p class="dynamic-text-container">
-                        We accelerate your <span id="aumestack-typewriter" class="typewriter-text"></span><span class="blinking-cursor-small">|</span>
-                    </p>
                     <p class="know-more-text">Know More <span class="arrow-icon">&#8594;</span></p>
                     <div class="card-description">
-                        <p>AUMESTACK stands as your dedicated growth partner, expertly guiding bold entrepreneurs and established enterprises through the exhilarating journey of expansion and innovation. Specializing in scaling thriving businesses and igniting the potential of new-age startups, we transform visionary ideas into tangible successes by blending meticulous strategic planning, cutting-edge technical execution, and a sharp tactical advantage designed to outshine competitors in today's fast-paced market. Our approach goes beyond mere advice—we collaborate closely to identify untapped opportunities, streamline operations, mitigate risks, and foster sustainable revenue streams, ensuring your venture not only launches but thrives with resilience and adaptability. Whether you're navigating market challenges, optimizing resources for efficiency, or seeking innovative partnerships to amplify your reach, AUMESTACK empowers you with tailored insights and proven methodologies that drive measurable results, turning ambitious dreams into enduring realities.</p>
+                        <p>AUMESTACK is your partner for business growth. We work with both new startups and established companies to help them scale and succeed. We don't just give advice; we collaborate with you to find opportunities, streamline your operations, and outsmart the competition. We're here to turn your ambitious ideas into a lasting reality.</p>
                     </div>
                     <a href="https://aumeverse.github.io/aumestack-/" class="visit-btn" target="_blank">Visit</a>
                 </div>
@@ -573,12 +606,9 @@ More than services, AumVerse is a growth philosophy, fostering collaborative com
             <div class="page-section card" id="aume-design">
                 <div class="section-content">
                     <h2>AUME Design</h2>
-                    <p class="dynamic-text-container">
-                        Want to create unforgettable <span id="aume-design-typewriter" class="typewriter-text"></span><span class="blinking-cursor-small">|</span>
-                    </p>
                     <p class="know-more-text">Know More <span class="arrow-icon">&#8594;</span></p>
                     <div class="card-description">
-                        <p>Aume Designs emerges as your creative ally, delivering professional posters, versatile social media templates, comprehensive branding kits, and innovative digital solutions tailored for local businesses, ambitious creators, and emerging startups. We specialize in transforming everyday visuals into powerful assets that captivate audiences and elevate your presence, blending artistic flair with strategic insight to craft identities that stand out in a crowded digital landscape. Our unique design support goes beyond the ordinary, offering customized guidance that aligns with your vision, enhances brand cohesion, and drives engagement through eye-catching graphics and user-friendly tools. Whether you're launching a campaign, refreshing your online profile, or building a full visual ecosystem, Aume Designs empowers you with high-quality, adaptable resources that boost your visual identity, foster growth, and leave a lasting impression on your target market.</p>
+                        <p>Aume Designs is your strategic creative partner. Our core expertise lies in crafting powerful brand identities and logos that form the foundation of your business. We then extend this vision with a full suite of professional assets, from high-quality posters and social media templates to comprehensive digital solutions and website development, ensuring your brand has a cohesive and impactful presence.</p>
                     </div>
                     <a href="https://aumeverse.github.io/aume_designs/?fbclid=PAQ0xDSwL5k9pleHRuA2FlbQIxMQABp4_CLHPnM1Br02RpEoEFWsGj91b6KNsbyfHs2hTS6y7S56RhDmk9UwoeZbIr_aem_GeWPrxh-63_8yXx47llw7g" class="visit-btn" target="_blank">Visit</a>
                 </div>
@@ -587,12 +617,9 @@ More than services, AumVerse is a growth philosophy, fostering collaborative com
             <div class="page-section card" id="aume-career">
                 <div class="section-content">
                     <h2>AUME Career</h2>
-                    <p class="dynamic-text-container">
-                        We unlock your <span id="aume-career-typewriter" class="typewriter-text"></span><span class="blinking-cursor-small">|</span>
-                    </p>
                     <p class="know-more-text">Know More <span class="arrow-icon">&#8594;</span></p>
                     <div class="card-description">
-                        <p>AumCareer emerges as your compassionate compass in the often winding journey of professional fulfillment, offering personalized career guidance, expert resume building, LinkedIn profile optimization, and interactive weekly mentorship workshops designed to illuminate your path forward. Tailored for ambitious students charting their first steps, dedicated job seekers navigating transitions, and seasoned professionals grappling with stagnation or uncertainty, our services blend insightful one-on-one coaching with practical tools to uncover your unique strengths, refine your personal brand, and align your aspirations with actionable opportunities. Through customized strategies, we help you craft compelling narratives that stand out in competitive markets, foster meaningful networks, and build the confidence needed to seize new roles or pivot directions. Our weekly workshops provide a supportive community space for skill-sharing, goal-setting, and real-world advice from experienced mentors, ensuring you gain not just knowledge but the resilience to thrive. Whether you're rebuilding from a career crossroads or accelerating toward your dream position, AumCareer empowers you to transform feelings of being lost into a clear, purposeful trajectory, unlocking doors to growth and success that feel authentically yours.</p>
+                        <p>At AumCareer, we help you find your professional purpose. We offer personalized career guidance and expert services like resume building and LinkedIn profile optimization. Whether you're a student starting out, a job seeker in transition, or a professional feeling stuck, we provide the tools and one-on-one support you need. Our weekly mentorship workshops create a space for you to gain confidence, build a powerful network, and turn your career aspirations into a clear, actionable plan.</p>
                     </div>
                     <a href="https://aumeverse.github.io/aume_career_/" class="visit-btn" target="_blank">Visit</a>
                 </div>
@@ -600,13 +627,19 @@ More than services, AumVerse is a growth philosophy, fostering collaborative com
         </div>
         
         <div class="page-section form-section" id="contact-form">
-            <div class="section-content">
-                <h2>Get in Touch</h2>
+            <div class="form-section-heading">
+                <h2 id="contact-heading-text"></h2>
+            </div>
+            <div class="form-section-form">
                 <form id="contact-form">
                     <p class="form-message" id="validation-message"></p>
                     <div class="form-group">
                         <label for="name">Name<span class="required">*</span></label>
                         <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="company-name">Company Name</label>
+                        <input type="text" id="company-name" name="company-name">
                     </div>
                     <div class="form-group">
                         <label for="email">Email<span class="required">*</span></label>
@@ -630,10 +663,6 @@ More than services, AumVerse is a growth philosophy, fostering collaborative com
             <p>© 2025 AumVerse. All rights reserved.</p>
         </footer>
 
-        <a href="https://wa.me/919372998318" class="whatsapp-btn" target="_blank">
-            <span class="whatsapp-icon"></span>
-            Any Queries?
-        </a>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -655,7 +684,7 @@ More than services, AumVerse is a growth philosophy, fostering collaborative com
             
             // Randomize size and color slightly for a more organic feel
             const size = Math.random() * 8 + 5; // 5px to 13px
-            const color = Math.random() > 0.5 ? '#3AB4F2' : '#FFFFFF';
+            const color = Math.random() > 0.5 ? '#2553d6' : '#FFFFFF';
             sparkle.style.width = `${size}px`;
             sparkle.style.height = `${size}px`;
             sparkle.style.backgroundColor = color;
@@ -784,7 +813,7 @@ More than services, AumVerse is a growth philosophy, fostering collaborative com
         
         // === DYNAMIC TYPING EFFECT (HEADER) ===
         const dynamicText = document.getElementById('dynamic-text');
-        const phrases = ["build brand??", "grow business??", "build career??"];
+        const phrases = ["build brand?", "grow business?", "build career?"];
         let phraseIndex = 0;
         let charIndex = 0;
         let isTyping = true;
@@ -818,6 +847,57 @@ More than services, AumVerse is a growth philosophy, fostering collaborative com
         }
         
         typeHeader();
+
+        // === GET IN TOUCH DYNAMIC TYPING EFFECT ===
+        const contactHeadingText = document.getElementById('contact-heading-text');
+        const contactPhrases = ["Get in Touch", "Let's Connect"];
+        let contactPhraseIndex = 0;
+        let contactCharIndex = 0;
+        let isContactTyping = true;
+        let contactTypeTimeout;
+        
+        const contactObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    if (contactHeadingText.textContent.length === 0) {
+                        typeContact();
+                    }
+                } else {
+                    clearTimeout(contactTypeTimeout);
+                    contactHeadingText.textContent = '';
+                    contactCharIndex = 0;
+                    isContactTyping = true;
+                }
+            });
+        }, { threshold: 0.5 });
+        contactObserver.observe(contactHeadingText);
+
+        function typeContact() {
+            const currentPhrase = contactPhrases[contactPhraseIndex];
+            if (isContactTyping) {
+                if (contactCharIndex < currentPhrase.length) {
+                    contactHeadingText.textContent += currentPhrase.charAt(contactCharIndex);
+                    contactCharIndex++;
+                    contactTypeTimeout = setTimeout(typeContact, 100);
+                } else {
+                    isContactTyping = false;
+                    contactTypeTimeout = setTimeout(eraseContact, 1000);
+                }
+            }
+        }
+
+        function eraseContact() {
+            const currentPhrase = contactPhrases[contactPhraseIndex];
+            if (contactCharIndex > 0) {
+                contactHeadingText.textContent = currentPhrase.substring(0, contactCharIndex - 1);
+                contactCharIndex--;
+                contactTypeTimeout = setTimeout(eraseContact, 50);
+            } else {
+                contactPhraseIndex = (contactPhraseIndex + 1) % contactPhrases.length;
+                isContactTyping = true;
+                contactTypeTimeout = setTimeout(typeContact, 500);
+            }
+        }
         
         // === SCROLL-BASED ANIMATION LOGIC ===
         const scrollSpinLogo = document.getElementById('scroll-spin-logo');
@@ -923,4 +1003,3 @@ More than services, AumVerse is a growth philosophy, fostering collaborative com
     </script>
 </body>
 </html>
-
