@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -564,7 +565,6 @@
                     <a href="#services">Services</a>
                     <ul class="dropdown-menu">
                         <li><a href="#aumestack">AUMESTACK</a></li>
-                        <li><a href="#aume-design">AUME Design</a></li>
                         <li><a href="#aume-career">AUME CAREER</a></li>
                     </ul>
                 </li>
@@ -606,17 +606,6 @@
                 </div>
             </div>
 
-            <div class="page-section card" id="aume-design">
-                <div class="section-content">
-                    <h2>AUME Design</h2>
-                    <p class="know-more-text">Know More <span class="arrow-icon">&#8594;</span></p>
-                    <div class="card-description">
-                        <p>Aume Designs is your strategic creative partner. Our core expertise lies in crafting powerful brand identities and logos that form the foundation of your business. We then extend this vision with a full suite of professional assets, from high-quality posters and social media templates to comprehensive digital solutions and website development, ensuring your brand has a cohesive and impactful presence.</p>
-                    </div>
-                    <a href="https://aumeverse.github.io/aume_designs/?fbclid=PAQ0xDSwL5k9pleHRuA2FlbQIxMQABp4_CLHPnM1Br02RpEoEFWsGj91b6KNsbyfHs2hTS6y7S56RhDmk9UwoeZbIr_aem_GeWPrxh-63_8yXx47llw7g" class="visit-btn" target="_blank">Visit</a>
-                </div>
-            </div>
-
             <div class="page-section card" id="aume-career">
                 <div class="section-content">
                     <h2>AUME Career</h2>
@@ -629,7 +618,7 @@
             </div>
         </div>
         
-        <div class="page-section form-section" id="contact-form">
+        <div class="page-section form-section" id="contact-form-section">
             <div class="form-section-heading">
                 <h2 id="contact-heading-text"></h2>
             </div>
@@ -796,7 +785,7 @@
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         if (element.textContent.length === 0) {
-                             type();
+                                type();
                         }
                     } else {
                         clearTimeout(timeout);
@@ -811,7 +800,6 @@
         }
 
         createTypewriterEffect('aumestack-typewriter', ["brand!!", "business!!", "product!!", "growth!!", "startup!!"]);
-        createTypewriterEffect('aume-design-typewriter', ["identities??", "packaging??", "experiences??", "websites??", "visuals??"]);
         createTypewriterEffect('aume-career-typewriter', ["potential!!", "pathway!!", "passion!!", "skills!!", "future!!"]);
         
         // === DYNAMIC TYPING EFFECT (HEADER) ===
@@ -1003,6 +991,45 @@
             }
             animate();
         };
+
+        // === WHATSAPP FORM SUBMISSION ===
+        const contactForm = document.getElementById('contact-form');
+        const validationMessage = document.getElementById('validation-message');
+        const phoneNumber = '9372998318';
+
+        contactForm.addEventListener('submit', (event) => {
+            event.preventDefault(); // Prevent the default form submission
+
+            // Check if required fields are filled
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const city = document.getElementById('city').value;
+            
+            if (!name || !email || !city) {
+                validationMessage.style.display = 'block';
+                validationMessage.textContent = 'Please fill out all required fields (*).';
+                return;
+            }
+
+            // Get form values
+            const company = document.getElementById('company-name').value;
+            const linkedin = document.getElementById('linkedin').value;
+
+            // Construct the message for WhatsApp
+            const message = `Name: ${name}%0ACompany: ${company || 'N/A'}%0AEmail: ${email}%0ALinkedIn: ${linkedin || 'N/A'}%0ACity: ${city}`;
+            
+            // Construct the WhatsApp URL
+            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+
+            // Open WhatsApp in a new tab
+            window.open(whatsappUrl, '_blank');
+            
+            // Clear the form and show a success message
+            contactForm.reset();
+            validationMessage.style.display = 'block';
+            validationMessage.style.color = '#25d366'; // Green color for success
+            validationMessage.textContent = 'Opening WhatsApp with your details...';
+        });
     </script>
 </body>
 </html>
