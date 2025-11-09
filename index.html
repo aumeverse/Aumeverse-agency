@@ -238,7 +238,7 @@
                     </p>
                 </div>
                 <div class="md:w-1/2 flex justify-center opacity-90">
-                     <!-- Simple visual representation of the ecosystem -->
+                      <!-- Simple visual representation of the ecosystem -->
                     <div class="relative w-64 h-64">
                         <div class="absolute inset-0 border-4 border-aume-blue/30 rounded-full animate-pulse-slow"></div>
                         <div class="absolute inset-4 border-4 border-white/10 rounded-full animate-spin-slow"></div>
@@ -533,9 +533,9 @@
             menuLinks.forEach((link, index) => {
                if (isOpen) {
                    // Delay adding 'active' to stagger them in
-                    setTimeout(() => {
-                        link.classList.remove('translate-x-10', 'opacity-0');
-                    }, index * 50); // Reduced JS delay, relying more on CSS transition delay
+                   setTimeout(() => {
+                       link.classList.remove('translate-x-10', 'opacity-0');
+                   }, index * 50); // Reduced JS delay, relying more on CSS transition delay
                } else {
                    link.classList.add('translate-x-10', 'opacity-0');
                }
