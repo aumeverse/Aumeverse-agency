@@ -1,1034 +1,641 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>AumVerse</title>
-    <!-- Updated font links for Montserrat -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet"/>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <title>AumVerse | Architecting Futures</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700;900&display=swap" rel="stylesheet"/>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        montserrat: ['Montserrat', 'sans-serif'],
+                    },
+                    colors: {
+                        aume: {
+                            blue: '#2553d6',
+                            dark: '#0a0a0a',
+                            light: '#E0E3EB',
+                        }
+                    },
+                    animation: {
+                        'spin-slow': 'spin 8s linear infinite',
+                        'float': 'floating 4s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        floating: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        /* General body and html styling */
+        /* --- Global Overrides & Utilities --- */
         body {
-            margin: 0;
             font-family: 'Montserrat', sans-serif;
-            color: #FFFFFF;
             background-color: #000000;
-            background-attachment: fixed;
-            position: relative;
+            color: #FFFFFF;
+            overflow-x: hidden;
+        }
+        html { scroll-behavior: smooth; }
+        #bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+
+        /* Glassmorphism Utilities */
+        .glass-card {
+            background: rgba(17, 17, 17, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        .glass-card-hover:hover {
+            border-color: rgba(37, 83, 214, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(37, 83, 214, 0.25);
+        }
+
+        /* Custom Animations */
+        .reveal {
             opacity: 0;
-            transition: opacity 1s ease-in-out;
-            cursor: default;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
         }
-
-        body.loaded {
-            opacity: 1;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        #bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-        }
-        
-        /* Header Styling */
-        header {
-            text-align: center;
-            background-color: transparent; 
-            padding: 20px 20px 30px; /* Reduced top padding to move the header up */
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        /* CSS for the small spinning logo */
-        .top-spinning-logo {
-            max-width: 300px;
-            height: auto;
-            margin-bottom: -200px; /* Adjusted to bring it much closer to the brand name */
-            animation: spin 5s linear infinite;
-        }
-        
-        @keyframes spin {
-            from {
-                transform: rotate(0deg);
-            }
-            to {
-                transform: rotate(360deg);
-            }
-        }
-        
-        /* CSS for the main brand name logo */
-        .header-logo {
-            max-width: 750px;
-            height: auto;
-            margin-top: 0;
-            animation: floating 4s ease-in-out infinite;
-        }
-
-        /* New keyframes for the floating animation */
-        @keyframes floating {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
-
-        /* Generic heading styling with floating animation */
-        h2 {
-            font-family: 'Montserrat', sans-serif;
-            color: #FFFFFF;
-            font-weight: 700;
-            animation: floating 4s ease-in-out infinite;
-        }
-
-        .navbar {
-            background-color: transparent;
-            position: sticky;
-            top: 20px;
-            z-index: 1000;
-            padding: 0;
-            box-shadow: none;
-            text-align: center;
-        }
-
-        .navbar ul {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            gap: 20px;
-            width: 100%;
-            max-width: 800px;
-            margin: auto;
-        }
-        
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        .dropdown-menu {
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            list-style: none;
-            padding: 10px;
-            margin-top: 10px;
-            min-width: 180px;
-            background-color: rgba(17, 17, 17, 0.9);
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-            visibility: hidden;
-            opacity: 0;
-            transition: visibility 0s, opacity 0.3s linear;
-        }
-
-        .dropdown-menu li {
-            padding: 8px 0;
-            text-align: center;
-        }
-        
-        .dropdown-menu a {
-            padding: 10px 20px;
-            color: #FFFFFF;
-            border-radius: 5px;
-            text-decoration: none;
-            display: block;
-        }
-
-        .dropdown:hover .dropdown-menu {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        .navbar a {
-            display: inline-block;
-            padding: 10px 25px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 16px;
-            color: #FFFFFF;
-            background: rgba(37, 83, 214, 0.1);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(37, 83, 214, 0.2);
-            border-radius: 50px;
-            transition: all 0.3s ease;
-        }
-
-        .navbar a:hover {
-            color: #FFFFFF;
-            background: rgba(37, 83, 214, 0.5);
-        }
-        
-        .container {
-            max-width: 1000px;
-            margin: 40px auto;
-            padding: 20px;
-        }
-        
-        /* New desktop animation styles */
-        .page-section {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            text-align: center;
-            min-height: auto;
-            padding: 40px;
-            margin: 60px auto;
-            background-color: rgba(17, 17, 17, 0.7);
-            border: 1px solid rgba(34, 34, 34, 0.7);
-            border-radius: 20px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            position: relative;
-            overflow: hidden;
+        .reveal.active {
             opacity: 1;
             transform: translateY(0);
-            transition: transform 0.8s ease-in-out, opacity 0.8s ease-in-out;
-            animation: float-section 6s ease-in-out infinite; /* Added floating animation */
-        }
-        
-        @keyframes float-section {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
         }
 
-        .page-section h2 {
-            font-size: 32px;
-            font-weight: 700;
-        }
-
-        .section-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            opacity: 1;
-            transform: translateY(0);
-            transition: none;
-        }
-
-        .about-aumeverse-section .section-content p {
-            text-align: left;
-        }
-
-        .dynamic-text-container {
-            font-size: 5vw; /* Responsive font size */
-            line-height: 1.6;
-            color: #E0E3EB;
-            min-height: 25px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            margin-top: 15px;
-            margin-bottom: 15px;
-            font-weight: 700;
-            white-space: nowrap; /* Prevents text from wrapping */
-        }
-        
-        .dynamic-text-container .typewriter-text {
-            color: #2553d6;
-            font-weight: bold;
-        }
-
-        .dynamic-text-container .blinking-cursor-small {
-            font-weight: 100;
-            border-right: 2px solid #E0E3EB;
-            animation: blink-caret 1s step-end infinite;
-            margin-left: 2px;
-        }
-
-        @keyframes blink-caret {
-            from, to { border-color: transparent }
-            50% { border-color: #E0E3EB; }
-        }
-
-        /* New styles for the description dropdown */
-        .card-description {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease-in-out;
-        }
-
-        .card-description.show {
-            max-height: 500px;
-        }
-        
-        .card-description p {
-            margin-top: 15px;
-            margin-bottom: 0;
-            color: #E0E3EB;
-            text-align: left;
-        }
-
-        /* New styles for the buttons */
-        .know-more-text {
-            font-size: 16px;
-            color: #2553d6;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            margin-top: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: color 0.3s ease;
-        }
-
-        .know-more-text:hover {
-            color: #1a3c93;
-        }
-
-        .arrow-icon {
-            margin-left: 10px;
-            transition: transform 0.3s ease;
-        }
-
-        .know-more-text.expanded .arrow-icon {
-            transform: rotate(90deg);
-        }
-
-        .visit-btn {
-            display: block;
-            width: fit-content;
-            margin: 15px auto 0;
-            text-decoration: none;
-            color: #FFFFFF;
-            background-color: #2553d6;
-            padding: 10px 18px;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            text-align: center;
-        }
-        .visit-btn:hover {
-            background-color: #1a3c93;
-        }
-
-        .form-section {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            max-width: 1000px;
-            margin: 60px auto;
-            padding: 40px;
-            background-color: rgba(17, 17, 17, 0.7);
-            border-radius: 20px;
-            border: 1px solid rgba(34, 34, 34, 0.7);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            position: relative;
-        }
-        
-        .form-section-heading {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .form-section-form {
-            width: 100%;
-        }
-
-        .form-section h2 {
-            text-align: center;
-            margin-bottom: 0;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            color: #FFFFFF;
-        }
-        
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            background-color: #1A1A1A;
-            border: 1px solid #333333;
-            border-radius: 8px;
-            color: #FFFFFF;
-            font-size: 16px;
-            box-sizing: border-box;
-        }
-        
-        .form-group input:focus {
-            outline: none;
-            border-color: #2553d6;
-            box-shadow: 0 0 8px rgba(37, 83, 214, 0.5);
-        }
-        
-        .form-message {
-            text-align: center;
-            color: #f00;
-            margin-bottom: 15px;
-            display: none;
-        }
-
-        .form-section button {
-            display: block;
-            width: fit-content;
-            margin: 20px auto 0;
-            padding: 12px 24px;
-            background-color: #2553d6;
-            color: #FFFFFF;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        
-        .form-section button:hover {
-            background-color: #1a3c93;
-        }
-
-        .required {
-            color: #f00;
-        }
-
-        footer {
-            text-align: center;
-            padding: 25px 10px;
-            font-size: 14px;
-            background-color: transparent;
-            color: #A0A0A0;
-        }
-
-        footer a {
-            color: #2553d6;
-            text-decoration: none;
-        }
-
-        .whatsapp-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            padding: 10px 15px;
-            background-color: #25d366;
-            color: white;
-            border-radius: 50px;
-            text-decoration: none;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s ease, background-color 0.3s ease;
-        }
-
-        .whatsapp-btn:hover {
-            transform: scale(1.05);
-            background-color: #1e9f4d;
-        }
-
-        .whatsapp-icon {
-            width: 24px;
-            height: 24px; 
-            margin-right: 10px;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Pro 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path fill="white" d="M380.9 97.4C339.4 55.9 283.4 33.1 224 33.1c-121.5 0-220 98.5-220 220 0 38.3 9.7 75.8 28.2 109.1L0 480l126.9-33.8c32.4 17.6 69 26.8 107.1 26.8h.1c121.5 0 220-98.5 220-220 0-59.4-22.9-115.4-64.4-156.9zM224 433.8h.1c32.7 0 64.1-8.9 91.6-25.9L403 448l-26.6-96.1c17.5-30.8 27.2-65.4 27.2-101.9 0-97.2-79-176.2-176.2-176.2-97.2 0-176.2 79-176.2 176.2 0 36.5 9.7 71.1 27.2 101.9L45 448l79.4-21.4c27.5 17 58.9 25.9 91.6 25.9zM315.8 261.2c-2.4-1.2-14.7-7.2-17-8.1-2.3-.9-4-.8-5.6 1.1-1.6 1.9-6.3 7.8-7.7 9.4-1.4 1.5-2.8 1.7-5.1 1.2-2.3-.5-9.6-3.5-18.3-11.3-6-5.4-10-12.1-11.2-14-1.2-1.9-1.2-1.8-.1-2.9 1.1-1.2 2.4-2.8 3.5-4.2.8-.8 1.5-1.9 2.3-3.1 1.4-2.3.7-4.4-.1-6-1.1-2.1-10.4-25.1-14.3-34.4-3.8-9.1-7.7-7.9-10.4-7.9-2.3 0-5.1-.3-7.8-.3-2.6 0-7 .9-9.5 3.5-2.5 2.6-9.5 9.3-9.5 22.5 0 13.2 9.7 26.1 11.1 28.1 1.4 2 19.2 30 46.6 42.4 27.4 12.4 27.4 8.3 32.5 7.4 5.1-.8 14.7-6 16.5-12.2 1.8-6.1 1.8-11.3 1.2-12.2-.6-.9-2.3-1.4-4.7-2.6z"/></svg>');
-            background-size: contain;
-            background-repeat: no-repeat;
-        }
-
-        /* Styling for the new animated heading */
-        .animated-heading-container {
-            text-align: center;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 700;
-            color: #FFFFFF;
-            font-size: 5vw; /* Responsive font size */
-            margin: 40px auto;
-            position: relative;
-        }
-        .animated-text {
-            color: #2553d6;
-        }
-        .blinking-pipe {
-            animation: blink 1s step-start infinite;
-        }
-        @keyframes blink {
-            50% { opacity: 0; }
-        }
-
-        /* Cursor Popping Effect Styling */
+        /* Cursor Effects */
         .cursor-pop {
             position: fixed;
-            background-color: rgba(37, 83, 214, 0.5);
+            background-color: rgba(37, 83, 214, 0.6);
             border-radius: 50%;
             pointer-events: none;
-            animation: pop-out 0.8s forwards;
+            animation: pop-out 0.8s forwards ease-out;
             z-index: 9999;
         }
         @keyframes pop-out {
-            0% {
-                transform: scale(0.1);
-                opacity: 1;
-            }
-            100% {
-                transform: scale(1.5);
-                opacity: 0;
-            }
+            0% { transform: scale(0.2); opacity: 0.8; }
+            100% { transform: scale(2); opacity: 0; }
         }
-        
-        /*
-            ====================================================
-            RESPONSIVE STYLES
-            ====================================================
-        */
-        @media (max-width: 768px) {
-            header {
-                padding: 40px 10px 20px;
-            }
-
-            .top-spinning-logo {
-                max-width: 120px;
-                margin-bottom: -90px;
-            }
-
-            .header-logo {
-                max-width: 300px;
-            }
-
-            .navbar ul {
-                display: flex;
-                flex-direction: row; /* Aligned horizontally on mobile */
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 10px;
-                max-width: none;
-            }
-
-            .navbar a {
-                padding: 8px 15px;
-                font-size: 14px;
-            }
-            
-            .form-section {
-                flex-direction: column;
-                padding: 20px;
-            }
-
-            .form-section-heading {
-                text-align: center;
-                padding-right: 0;
-            }
-
-            .animated-heading-container {
-                font-size: 1.5rem;
-            }
-            
-            .dynamic-text-container {
-                font-size: 1.5rem;
-                white-space: normal;
-            }
+        .blinking-cursor {
+            animation: blink 1s step-end infinite;
         }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        /* Menu Button Animations */
+        .menu-open #line1 { transform: rotate(-45deg) translate(-5px, 5px); }
+        .menu-open #line2 { opacity: 0; }
+        .menu-open #line3 { transform: rotate(45deg) translate(-5px, -5px); }
     </style>
 </head>
-<body>
+<body class="opacity-0 transition-opacity duration-1000 ease-in-out">
+    <!-- Three.js Canvas Background -->
     <canvas id="bg"></canvas>
 
-    <!-- Main content container -->
-    <div id="main-content">
-        <header id="home">
-            <a href="#home">
-                <img class="top-spinning-logo" src="https://i.ibb.co/YTQMWQVD/final-logo-02.png" alt="AumVerse Top Logo" />
+    <!-- FLOATING MENU BUTTON -->
+    <button id="menu-toggle" class="fixed top-6 right-6 z-[110] w-14 h-14 glass-card rounded-full flex items-center justify-center transition-transform duration-300 hover:scale-105 active:scale-95 group" aria-label="Toggle Menu">
+        <div class="relative w-6 h-5 flex flex-col justify-between items-center overflow-hidden">
+            <span id="line1" class="w-full h-0.5 bg-white rounded-full transition-all duration-300"></span>
+            <span id="line2" class="w-full h-0.5 bg-white rounded-full transition-all duration-300"></span>
+            <span id="line3" class="w-full h-0.5 bg-white rounded-full transition-all duration-300"></span>
+        </div>
+    </button>
+
+    <!-- SIDE MENU OVERLAY & DRAWER -->
+    <div id="menu-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] opacity-0 pointer-events-none transition-opacity duration-500"></div>
+    <nav id="side-menu" class="fixed top-0 right-0 h-full w-full sm:w-96 glass-card border-l border-white/10 z-[105] transform translate-x-full transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) flex flex-col justify-center p-8 sm:p-12">
+        <ul class="space-y-8 text-2xl md:text-3xl font-black text-right">
+            <li class="menu-link-wrapper translate-x-10 opacity-0 transition-all duration-500 delay-[100ms]">
+                <a href="#home" class="menu-link hover:text-aume-blue transition-colors inline-block">Home</a>
+            </li>
+            <li class="menu-link-wrapper translate-x-10 opacity-0 transition-all duration-500 delay-[150ms]">
+                <a href="#about" class="menu-link hover:text-aume-blue transition-colors inline-block">About</a>
+            </li>
+            <li class="menu-link-wrapper translate-x-10 opacity-0 transition-all duration-500 delay-[200ms]">
+                <span class="text-gray-500 text-sm uppercase tracking-widest block mb-2">Services</span>
+                <a href="#aumestack" class="menu-link hover:text-cyan-400 transition-colors block mb-4">AUMESTACK</a>
+                <a href="#aumedesign" class="menu-link hover:text-blue-400 transition-colors block">AUMEDESIGN</a>
+            </li>
+            <li class="menu-link-wrapper translate-x-10 opacity-0 transition-all duration-500 delay-[250ms]">
+                <a href="#contact-section" class="menu-link hover:text-aume-blue transition-colors inline-block">Contact</a>
+            </li>
+        </ul>
+        <div class="absolute bottom-12 right-12 text-right text-sm text-gray-500 menu-link-wrapper translate-x-10 opacity-0 transition-all duration-500 delay-[300ms]">
+            <p>© 2025 AumVerse</p>
+        </div>
+    </nav>
+
+    <!-- Main Content Wrapper -->
+    <div id="main-content" class="relative z-10">
+
+        <!-- HEADER & HERO COMBINED -->
+        <header id="home" class="flex flex-col items-center pt-10 px-4 mb-32 min-h-[90vh] justify-center">
+            <a href="#home" class="mb-[-180px] z-0 opacity-80">
+                <img class="w-48 md:w-72 animate-spin-slow" src="https://i.ibb.co/YTQMWQVD/final-logo-02.png" alt="AumVerse Spiral" />
             </a>
-            <a href="#home">
-                <img class="header-logo" id="scroll-spin-logo" src="https://i.ibb.co/yFYj2dHt/final-logo-04.png" alt="AumVerse Logo" />
+            <!-- Reduced bottom margin here from mb-16 to mb-8 -->
+            <a href="#home" class="z-10 mb-8">
+                <img class="w-[80%] md:w-[750px] animate-float" id="scroll-spin-logo" src="https://i.ibb.co/yFYj2dHt/final-logo-04.png" alt="AumVerse Logo" />
             </a>
+            
+            <!-- HERO TEXT -->
+            <div class="text-center">
+                <!-- Added md:pl-12 to nudge the whole block slightly right for visual balance -->
+                <h1 class="text-4xl md:text-7xl font-black mb-6 leading-tight flex items-center justify-center gap-2 md:gap-4 md:pl-12">
+                    <span>We</span>
+                    <span class="text-aume-blue inline-block text-left min-w-[280px] md:min-w-[450px]">
+                        <span id="dynamic-text"></span><span class="blinking-cursor">|</span>
+                    </span>
+                </h1>
+                <h2 class="text-xl md:text-3xl font-bold text-gray-200 mb-4 reveal">
+                    Where Innovation Meets Excellence
+                </h2>
+                <p class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto reveal">
+                    We don't just build businesses. We architect futures.
+                </p>
+            </div>
         </header>
 
-        <nav class="navbar">
-            <ul>
-                <li><a href="#home">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li class="dropdown">
-                    <a href="#services">Services</a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#aumestack">AUMESTACK</a></li>
-                        <li><a href="#aume-career">AUME CAREER</a></li>
-                    </ul>
-                </li>
-                <li><a href="#contact-form">Contact</a></li>
-            </ul>
-        </nav>
-
-        <!-- New animated heading section -->
-        <div class="animated-heading-container">
-            Want to <span id="dynamic-text" class="animated-text"></span><span class="blinking-pipe">|</span>
-        </div>
-
-        <div class="page-section about-aumeverse-section" id="about">
-            <div class="section-content">
-                <h2>About AumeVerse</h2>
-                <p>At AumVerse, we're dedicated to empowering ambitious dreamers and innovators. We've built an ecosystem where your boldest ideas can ignite and transform into a thriving reality. Our mission is to help you stand out and make an impact, because we believe that growth is the true rhythm of existence.</p>
-            </div>
-        </div>
-
-        <div class="page-section solid-section" id="explore-services">
-            <div class="section-content">
-                <h2>
-                    <span class="animated-word">Explore</span>
-                    <span class="animated-word">Our</span>
-                    <span class="animated-word">Services</span>
-                </h2>
-            </div>
-        </div>
-
-        <div class="container" id="services">
-            <div class="page-section card" id="aumestack">
-                <div class="section-content">
-                    <h2>AUMESTACK</h2>
-                    <p class="know-more-text">Know More <span class="arrow-icon">&#8594;</span></p>
-                    <div class="card-description">
-                        <p>AUMESTACK is your partner for business growth. We work with both new startups and established companies to help them scale and succeed. We don't just give advice; we collaborate with you to find opportunities, streamline your operations, and outsmart the competition. We're here to turn your ambitious ideas into a lasting reality.</p>
+        <!-- ABOUT / BRAND PHILOSOPHY -->
+        <section id="about" class="container mx-auto px-4 mb-32 reveal">
+            <div class="glass-card rounded-3xl p-8 md:p-16 max-w-4xl mx-auto text-center md:text-left flex flex-col md:flex-row items-center gap-12">
+                <div class="md:w-1/2">
+                    <h2 class="text-4xl font-black mb-6">The AumVerse Ecosystem</h2>
+                    <div class="h-1 w-20 bg-aume-blue mb-6 mx-auto md:mx-0"></div>
+                    <p class="text-lg text-gray-300 leading-relaxed mb-6">
+                        In a world of ordinary agencies, we built an extraordinary ecosystem. AumVerse is not just a parent company—it's a vision. A commitment to excellence that spans creative design and business intelligence.
+                    </p>
+                    <p class="text-lg text-gray-300 leading-relaxed font-semibold">
+                        We believe that true success comes from the perfect fusion of stunning design and strategic growth. That's why we created two powerhouses under one roof.
+                    </p>
+                </div>
+                <div class="md:w-1/2 flex justify-center opacity-90">
+                     <!-- Simple visual representation of the ecosystem -->
+                    <div class="relative w-64 h-64">
+                        <div class="absolute inset-0 border-4 border-aume-blue/30 rounded-full animate-pulse-slow"></div>
+                        <div class="absolute inset-4 border-4 border-white/10 rounded-full animate-spin-slow"></div>
+                        <div class="absolute inset-0 flex items-center justify-center font-black text-2xl tracking-widest">AUMVERSE</div>
+                        <div class="absolute -top-4 left-1/2 -translate-x-1/2 glass-card px-4 py-1 rounded-full text-xs font-bold text-aume-blue">PARENT</div>
+                        <div class="absolute bottom-8 -right-8 glass-card px-4 py-2 rounded-xl text-sm font-bold">AUMEDESIGN</div>
+                        <div class="absolute bottom-8 -left-8 glass-card px-4 py-2 rounded-xl text-sm font-bold">AUMESTACK</div>
                     </div>
-                    <a href="https://aumeverse.github.io/Aumestack-/" class="visit-btn" target="_blank">Visit</a>
                 </div>
             </div>
+        </section>
 
-            <div class="page-section card" id="aume-career">
-                <div class="section-content">
-                    <h2>AUME Career</h2>
-                    <p class="know-more-text">Know More <span class="arrow-icon">&#8594;</span></p>
-                    <div class="card-description">
-                        <p>At AumCareer, we help you find your professional purpose. We offer personalized career guidance and expert services like resume building and LinkedIn profile optimization. Whether you're a student starting out, a job seeker in transition, or a professional feeling stuck, we provide the tools and one-on-one support you need. Our weekly mentorship workshops create a space for you to gain confidence, build a powerful network, and turn your career aspirations into a clear, actionable plan.</p>
+        <!-- SERVICES INTRO -->
+        <div id="services" class="text-center mb-16 reveal">
+            <h2 class="text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500 inline-block">
+                Explore Our Powerhouses
+            </h2>
+        </div>
+
+        <!-- AUMESTACK SECTION (First) -->
+        <section id="aumestack" class="container mx-auto px-4 mb-32">
+            <div class="glass-card glass-card-hover rounded-3xl overflow-hidden transition-all duration-500 reveal tilt-card">
+                <!-- Distinctive header for Stack -->
+                <div class="bg-gradient-to-r from-aume-blue/50 to-cyan-900/50 p-10 md:p-16 text-center md:text-left">
+                     <div class="flex flex-col md:flex-row justify-between items-center gap-8">
+                        <div>
+                            <h3 class="text-4xl md:text-6xl font-black mb-4">AUMESTACK</h3>
+                            <p class="text-xl md:text-2xl font-medium text-cyan-200">Engineering Growth, Architecting Success</p>
+                        </div>
+                         <a href="https://aumestack.netlify.app/" target="_blank" class="bg-white text-aume-dark px-8 py-4 rounded-full font-black hover:scale-105 transition-transform flex items-center gap-2">
+                            SCALE NOW <span>→</span>
+                        </a>
                     </div>
-                    <a href="https://aumeverse.github.io/aume_career_/" class="visit-btn" target="_blank">Visit</a>
+                </div>
+                <div class="p-10 md:p-16">
+                     <p class="text-2xl font-bold mb-8 max-w-3xl leading-relaxed">
+                        "In business, there are two types of companies: those that react, and those that dominate. AUMESTACK builds the latter."
+                    </p>
+                    <p class="text-gray-300 text-lg mb-12 max-w-4xl">
+                        We're growth partners who architect your success from the ground up. Using cutting-edge automation, AI-driven insights, and battle-tested strategies, we turn ambitious startups into category leaders and plateaued businesses into profit machines.
+                    </p>
+
+                    <!-- Services Grid with Professional SVGs -->
+                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                        <div class="glass-card p-6 rounded-2xl hover:border-cyan-500/50 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-cyan-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            <h4 class="font-bold text-lg mb-2">Business Automation</h4>
+                            <p class="text-sm text-gray-400">Turn weeks of work into minutes. Scale without chaos.</p>
+                        </div>
+                        <div class="glass-card p-6 rounded-2xl hover:border-cyan-500/50 transition-colors">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-cyan-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                            </svg>
+                            <h4 class="font-bold text-lg mb-2">AI Integration</h4>
+                            <p class="text-sm text-gray-400">Future-proof your business. Automate & optimize everything.</p>
+                        </div>
+                        <div class="glass-card p-6 rounded-2xl hover:border-cyan-500/50 transition-colors">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-cyan-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                            </svg>
+                            <h4 class="font-bold text-lg mb-2">Launch Strategy</h4>
+                            <p class="text-sm text-gray-400">From zero to one. Data-driven roadmaps for a flawless market entry.</p>
+                        </div>
+                         <div class="glass-card p-6 rounded-2xl hover:border-cyan-500/50 transition-colors">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-cyan-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                            <h4 class="font-bold text-lg mb-2">AI Business Consulting</h4>
+                            <p class="text-sm text-gray-400">Future-proof your operations. Strategic AI implementation for exponential advantage.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-        
-        <div class="page-section form-section" id="contact-form-section">
-            <div class="form-section-heading">
-                <h2 id="contact-heading-text"></h2>
+        </section>
+
+        <!-- AUMEDESIGN SECTION (Second) -->
+        <section id="aumedesign" class="container mx-auto px-4 mb-32">
+            <div class="glass-card glass-card-hover rounded-3xl overflow-hidden transition-all duration-500 reveal tilt-card">
+                <!-- Distinctive header for Design -->
+                <div class="bg-gradient-to-r from-blue-950/50 to-aume-blue/50 p-10 md:p-16 text-center md:text-left">
+                    <div class="flex flex-col md:flex-row justify-between items-center gap-8">
+                        <div>
+                            <h3 class="text-4xl md:text-6xl font-black mb-4">AUMEDESIGN</h3>
+                            <p class="text-xl md:text-2xl font-medium text-blue-100">Where Brands Become Legends</p>
+                        </div>
+                        <a href="https://aumedesign.netlify.app/" target="_blank" class="bg-white text-aume-dark px-8 py-4 rounded-full font-black hover:scale-105 transition-transform flex items-center gap-2">
+                            VISIT STUDIO <span>→</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="p-10 md:p-16">
+                     <p class="text-2xl font-bold mb-8 max-w-3xl leading-relaxed">
+                        "Your brand is not a logo. It's an experience. A feeling. A promise."
+                    </p>
+                    <p class="text-gray-300 text-lg mb-12 max-w-4xl">
+                        At AUMEDESIGN, we don't create designs—we craft brand universes. Every pixel, every color, every curve is engineered to captivate, convert, and conquer. We build visual experiences that don't just look premium—they ARE premium.
+                    </p>
+
+                    <!-- Services Grid with Professional SVGs -->
+                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                        <div class="glass-card p-6 rounded-2xl hover:border-aume-blue/50 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                            </svg>
+                            <h4 class="font-bold text-lg mb-2">Brand Identity</h4>
+                            <p class="text-sm text-gray-400">Logos that become legacies. Visual systems that define eras.</p>
+                        </div>
+                        <div class="glass-card p-6 rounded-2xl hover:border-aume-blue/50 transition-colors">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                            </svg>
+                            <h4 class="font-bold text-lg mb-2">Web Design & Dev</h4>
+                            <p class="text-sm text-gray-400">Websites so stunning, your competitors will hire us next.</p>
+                        </div>
+                        <div class="glass-card p-6 rounded-2xl hover:border-aume-blue/50 transition-colors">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                            </svg>
+                            <h4 class="font-bold text-lg mb-2">Packaging</h4>
+                            <p class="text-sm text-gray-400">Transform shelves into showrooms. Make products impossible to ignore.</p>
+                        </div>
+                         <div class="glass-card p-6 rounded-2xl hover:border-aume-blue/50 transition-colors">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <h4 class="font-bold text-lg mb-2">Brand Strategy</h4>
+                            <p class="text-sm text-gray-400">Position your brand where it belongs—at the very top.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="form-section-form">
-                <form id="contact-form">
-                    <p class="form-message" id="validation-message"></p>
-                    <div class="form-group">
-                        <label for="name">Name<span class="required">*</span></label>
-                        <input type="text" id="name" name="name" required>
+        </section>
+
+        <!-- WHY CHOOSE US -->
+        <section class="container mx-auto px-4 mb-32 reveal">
+            <h2 class="text-4xl md:text-5xl font-black text-center mb-16">Why the Best Choose AumVerse</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="glass-card p-8 rounded-3xl text-center">
+                    <!-- Professional Icon -->
+                    <div class="bg-aume-blue/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-aume-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                        </svg>
                     </div>
-                    <div class="form-group">
-                        <label for="company-name">Company Name</label>
-                        <input type="text" id="company-name" name="company-name">
+                    <h3 class="text-2xl font-bold mb-4">Unmatched Expertise</h3>
+                    <p class="text-gray-400">With AUMEDESIGN's creative genius and AUMESTACK's growth intelligence, you get the complete package. Design that sells. Strategy that scales.</p>
+                </div>
+                <div class="glass-card p-8 rounded-3xl text-center md:-mt-8 border-aume-blue/50">
+                    <!-- Professional Icon -->
+                    <div class="bg-aume-blue/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-aume-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
                     </div>
-                    <div class="form-group">
-                        <label for="email">Email<span class="required">*</span></label>
-                        <input type="email" id="email" name="email" required>
+                    <h3 class="text-2xl font-bold mb-4">Proven Results</h3>
+                    <p class="text-gray-400">Success stories, client revenue, and industry recognition. But more importantly—brands that last, businesses that thrive.</p>
+                </div>
+                <div class="glass-card p-8 rounded-3xl text-center">
+                    <!-- Professional Icon -->
+                    <div class="bg-aume-blue/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-aume-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
                     </div>
-                    <div class="form-group">
-                        <label for="linkedin">LinkedIn Profile</label>
-                        <input type="text" id="linkedin" name="linkedin">
+                    <h3 class="text-2xl font-bold mb-4">Your Success Partner</h3>
+                    <p class="text-gray-400">We don't do one-off projects. We build long-term partnerships. Your growth is our obsession. Your success is our reputation.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- FINAL CTA -->
+        <section class="container mx-auto px-4 mb-32 text-center reveal">
+            <h2 class="text-5xl md:text-7xl font-black mb-8">Ready to Join the Elite?</h2>
+            <p class="text-xl text-gray-300 max-w-2xl mx-auto mb-12">
+                Whether you need a brand that turns heads or a business that prints money (or both), AumVerse is your answer. Don't settle for ordinary. Demand extraordinary.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-6">
+                 <a href="#aumestack" class="px-8 py-4 rounded-full bg-aume-blue text-lg font-bold hover:scale-105 transition-all shadow-lg shadow-aume-blue/50">
+                    Scale My Business
+                </a>
+                <a href="#aumedesign" class="px-8 py-4 rounded-full border-2 border-white text-lg font-bold hover:bg-white hover:text-black transition-all">
+                    Transform My Brand
+                </a>
+            </div>
+        </section>
+
+        <!-- CONTACT FORM SECTION -->
+        <section id="contact-section" class="container mx-auto px-4 mb-32 reveal">
+            <div class="glass-card max-w-3xl mx-auto rounded-3xl p-8 md:p-12 relative overflow-hidden">
+                <!-- Decorative blur behind form -->
+                <div class="absolute top-0 right-0 w-64 h-64 bg-aume-blue/20 rounded-full filter blur-[100px] -z-10"></div>
+
+                <div class="text-center mb-8">
+                     <!-- Static heading as requested -->
+                     <h2 class="text-4xl font-black mb-4">Let's Connect</h2>
+                     <p class="text-gray-400">Direct line to our leadership team.</p>
+                </div>
+
+                <form id="contact-form" class="space-y-6">
+                    <p class="hidden text-center p-3 rounded-lg bg-aume-blue/20 text-aume-blue font-bold" id="validation-message"></p>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label for="name" class="block text-sm font-bold ml-4">Name <span class="text-aume-blue">*</span></label>
+                            <input type="text" id="name" required placeholder="John Doe" 
+                                   class="w-full px-6 py-4 rounded-2xl bg-black/50 border border-white/10 focus:border-aume-blue focus:outline-none transition-colors text-white placeholder-gray-600">
+                        </div>
+                        <div class="space-y-2">
+                            <label for="email" class="block text-sm font-bold ml-4">Email <span class="text-aume-blue">*</span></label>
+                            <input type="email" id="email" required placeholder="john@company.com" 
+                                   class="w-full px-6 py-4 rounded-2xl bg-black/50 border border-white/10 focus:border-aume-blue focus:outline-none transition-colors text-white placeholder-gray-600">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="city">City<span class="required">*</span></label>
-                        <input type="text" id="city" name="city" required>
+                    
+                    <!-- Added Contact Number -->
+                    <div class="grid md:grid-cols-2 gap-6">
+                         <div class="space-y-2">
+                            <label for="contact-number" class="block text-sm font-bold ml-4">Contact Number <span class="text-gray-500 font-normal text-xs">(WhatsApp preferred)</span></label>
+                            <input type="tel" id="contact-number" placeholder="+91 98765 43210" 
+                                   class="w-full px-6 py-4 rounded-2xl bg-black/50 border border-white/10 focus:border-aume-blue focus:outline-none transition-colors text-white placeholder-gray-600">
+                        </div>
+                        <div class="space-y-2">
+                            <label for="city" class="block text-sm font-bold ml-4">City <span class="text-aume-blue">*</span></label>
+                            <input type="text" id="city" required placeholder="New York" 
+                                   class="w-full px-6 py-4 rounded-2xl bg-black/50 border border-white/10 focus:border-aume-blue focus:outline-none transition-colors text-white placeholder-gray-600">
+                        </div>
                     </div>
-                    <button type="submit">Submit</button>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                         <div class="space-y-2">
+                            <label for="company-name" class="block text-sm font-bold ml-4">Company Name</label>
+                            <input type="text" id="company-name" placeholder="Future Unicorn Inc." 
+                                   class="w-full px-6 py-4 rounded-2xl bg-black/50 border border-white/10 focus:border-aume-blue focus:outline-none transition-colors text-white placeholder-gray-600">
+                        </div>
+                        <div class="space-y-2">
+                            <label for="linkedin" class="block text-sm font-bold ml-4">LinkedIn Profile</label>
+                            <input type="text" id="linkedin" placeholder="linkedin.com/in/johndoe" 
+                                   class="w-full px-6 py-4 rounded-2xl bg-black/50 border border-white/10 focus:border-aume-blue focus:outline-none transition-colors text-white placeholder-gray-600">
+                        </div>
+                    </div>
+                    
+                    <!-- ACTION BUTTON -->
+                    <div class="mt-8">
+                        <button type="submit" id="whatsapp-btn" class="w-full py-4 bg-aume-blue hover:bg-blue-700 rounded-2xl font-black text-lg transition-all flex items-center justify-center gap-3">
+                            <span>Launch via WhatsApp</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
+                            </svg>
+                        </button>
+                    </div>
+
                 </form>
             </div>
-        </div>
+        </section>
 
-        <footer id="contact">
-            <p>Contact us at: <a href="mailto:infoaume.in@gmail.com">infoaume.in@gmail.com</a></p>
+        <footer class="text-center pb-10 text-gray-500 text-sm">
             <p>© 2025 AumVerse. All rights reserved.</p>
+            <p>Architecting Futures across the Globe.</p>
         </footer>
 
     </div>
 
+    <!-- --- SCRIPTS --- -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // === PAGE LOAD FADE IN ===
-        window.addEventListener('load', () => {
-            document.body.classList.add('loaded');
-        });
+        // === PAGE LOAD ===
+        window.addEventListener('load', () => document.body.classList.remove('opacity-0'));
 
-        // === CURSOR POPPING EFFECT ===
-        const cursorPops = [];
-        document.body.addEventListener('mousemove', (e) => {
-            // Create a small, sparkling particle
-            const sparkle = document.createElement('div');
-            sparkle.className = 'cursor-pop';
-            sparkle.style.left = `${e.clientX}px`;
-            sparkle.style.top = `${e.clientY}px`;
-            sparkle.style.opacity = '1';
+        // === MENU TOGGLE LOGIC ===
+        const menuToggle = document.getElementById('menu-toggle');
+        const sideMenu = document.getElementById('side-menu');
+        const menuOverlay = document.getElementById('menu-overlay');
+        const menuLinks = document.querySelectorAll('.menu-link-wrapper');
+
+        function toggleMenu() {
+            const isOpen = document.body.classList.toggle('menu-open');
+            sideMenu.classList.toggle('translate-x-full', !isOpen);
+            menuOverlay.classList.toggle('opacity-0', !isOpen);
+            menuOverlay.classList.toggle('pointer-events-none', !isOpen);
             
-            // Randomize size and color slightly for a more organic feel
-            const size = Math.random() * 8 + 5; // 5px to 13px
-            const color = Math.random() > 0.5 ? '#2553d6' : '#FFFFFF';
-            sparkle.style.width = `${size}px`;
-            sparkle.style.height = `${size}px`;
-            sparkle.style.backgroundColor = color;
-            
-            document.body.appendChild(sparkle);
-
-            // Animate it
-            let currentOpacity = 1;
-            const animateSparkle = () => {
-                currentOpacity -= 0.05;
-                const currentSize = parseFloat(sparkle.style.width) * 1.05;
-                sparkle.style.opacity = currentOpacity;
-                sparkle.style.width = `${currentSize}px`;
-                sparkle.style.height = `${currentSize}px`;
-                if (currentOpacity > 0) {
-                    requestAnimationFrame(animateSparkle);
-                } else {
-                    sparkle.remove();
-                }
-            };
-            animateSparkle();
-        });
-
-        // === SCROLL-BASED SECTION ANIMATIONS (DESKTOP ONLY) ===
-        const observerOptions = {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.1
-        };
-
-        const sections = document.querySelectorAll('.page-section');
-        const isMobile = window.matchMedia("(max-width: 768px)").matches;
-
-        if (!isMobile) {
-            const sectionObserver = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('is-visible');
-                    } else {
-                        entry.target.classList.remove('is-visible');
-                    }
-                });
-            }, observerOptions);
-
-            sections.forEach(section => {
-                sectionObserver.observe(section);
+            // Animate links
+            menuLinks.forEach((link, index) => {
+               if (isOpen) {
+                   // Delay adding 'active' to stagger them in
+                    setTimeout(() => {
+                        link.classList.remove('translate-x-10', 'opacity-0');
+                    }, index * 50); // Reduced JS delay, relying more on CSS transition delay
+               } else {
+                   link.classList.add('translate-x-10', 'opacity-0');
+               }
             });
         }
 
-        // === CARD DESCRIPTION TOGGLE LOGIC ===
-        document.querySelectorAll('.know-more-text').forEach(item => {
-            item.addEventListener('click', () => {
-                const description = item.nextElementSibling;
-                if (description.classList.contains('show')) {
-                    description.classList.remove('show');
-                    item.classList.remove('expanded');
-                } else {
-                    document.querySelectorAll('.card-description.show').forEach(desc => {
-                        desc.classList.remove('show');
-                        desc.previousElementSibling.classList.remove('expanded');
-                    });
-                    description.classList.add('show');
-                    item.classList.add('expanded');
-                }
-            });
+        menuToggle.addEventListener('click', toggleMenu);
+        menuOverlay.addEventListener('click', toggleMenu);
+        // Close menu when a link is clicked
+        document.querySelectorAll('.menu-link').forEach(link => {
+            link.addEventListener('click', toggleMenu);
         });
 
-        // === DYNAMIC TYPING EFFECTS FOR SERVICE CARDS ===
-        function createTypewriterEffect(elementId, phrases) {
-            const element = document.getElementById(elementId);
-            if (!element) return;
-            
-            let phraseIndex = 0;
-            let charIndex = 0;
-            let isTyping = true;
-            let timeout;
-
-            function type() {
-                const currentPhrase = phrases[phraseIndex];
-                if (isTyping) {
-                    if (charIndex < currentPhrase.length) {
-                        element.textContent += currentPhrase.charAt(charIndex);
-                        charIndex++;
-                        timeout = setTimeout(type, 100);
-                    } else {
-                        isTyping = false;
-                        timeout = setTimeout(erase, 1000);
-                    }
-                }
-            }
-
-            function erase() {
-                const currentPhrase = phrases[phraseIndex];
-                if (charIndex > 0) {
-                    element.textContent = currentPhrase.substring(0, charIndex - 1);
-                    charIndex--;
-                    timeout = setTimeout(erase, 50);
-                } else {
-                    phraseIndex = (phraseIndex + 1) % phrases.length;
-                    isTyping = true;
-                    timeout = setTimeout(type, 500);
-                }
-            }
-
-            const cardObserver = new IntersectionObserver(entries => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        if (element.textContent.length === 0) {
-                                type();
-                        }
-                    } else {
-                        clearTimeout(timeout);
-                        element.textContent = '';
-                        charIndex = 0;
-                        isTyping = true;
-                    }
-                });
-            }, { threshold: 0.5 });
-            
-            cardObserver.observe(element.closest('.card'));
-        }
-
-        createTypewriterEffect('aumestack-typewriter', ["brand!!", "business!!", "product!!", "growth!!", "startup!!"]);
-        createTypewriterEffect('aume-career-typewriter', ["potential!!", "pathway!!", "passion!!", "skills!!", "future!!"]);
-        
-        // === DYNAMIC TYPING EFFECT (HEADER) ===
-        const dynamicText = document.getElementById('dynamic-text');
-        const phrases = ["build brand?", "grow business?", "build career?"];
-        let phraseIndex = 0;
-        let charIndex = 0;
-        let isTyping = true;
-        let headerTypeTimeout;
-
-        function typeHeader() {
-            const currentPhrase = phrases[phraseIndex];
-            if (isTyping) {
-                if (charIndex < currentPhrase.length) {
-                    dynamicText.textContent += currentPhrase.charAt(charIndex);
-                    charIndex++;
-                    headerTypeTimeout = setTimeout(typeHeader, 100);
-                } else {
-                    isTyping = false;
-                    headerTypeTimeout = setTimeout(eraseHeader, 1000);
-                }
-            }
-        }
-
-        function eraseHeader() {
-            const currentPhrase = phrases[phraseIndex];
-            if (charIndex > 0) {
-                dynamicText.textContent = currentPhrase.substring(0, charIndex - 1);
-                charIndex--;
-                headerTypeTimeout = setTimeout(eraseHeader, 50);
-            } else {
-                phraseIndex = (phraseIndex + 1) % phrases.length;
-                isTyping = true;
-                headerTypeTimeout = setTimeout(typeHeader, 500);
-            }
-        }
-        
-        typeHeader();
-
-        // === GET IN TOUCH DYNAMIC TYPING EFFECT ===
-        const contactHeadingText = document.getElementById('contact-heading-text');
-        const contactPhrases = ["Get in Touch", "Let's Connect"];
-        let contactPhraseIndex = 0;
-        let contactCharIndex = 0;
-        let isContactTyping = true;
-        let contactTypeTimeout;
-        
-        const contactObserver = new IntersectionObserver((entries) => {
+        // === SCROLL REVEAL OBSERVER ===
+        const revealCallback = (entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    if (contactHeadingText.textContent.length === 0) {
-                        typeContact();
+                    entry.target.classList.add('active');
+                }
+            });
+        };
+        const revealObserver = new IntersectionObserver(revealCallback, { threshold: 0.15 });
+        document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+        // === 3D TILT EFFECT (Vanilla JS implementation) ===
+        document.querySelectorAll('.tilt-card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = ((y - centerY) / centerY) * -5; // Max 5deg rotation
+                const rotateY = ((x - centerX) / centerX) * 5;
+
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+            });
+        });
+
+        // === CURSOR EFFECTS (Preserved & Optimized) ===
+        let lastSparkle = 0;
+        document.body.addEventListener('mousemove', (e) => {
+            if (Date.now() - lastSparkle < 40) return; // Throttle
+            lastSparkle = Date.now();
+            const sparkle = document.createElement('div');
+            sparkle.className = 'cursor-pop';
+            const size = Math.random() * 6 + 4;
+            sparkle.style.width = `${size}px`;
+            sparkle.style.height = `${size}px`;
+            sparkle.style.left = `${e.clientX - size/2}px`;
+            sparkle.style.top = `${e.clientY - size/2}px`;
+            sparkle.style.backgroundColor = Math.random() > 0.6 ? '#2553d6' : '#ffffff';
+            document.body.appendChild(sparkle);
+            setTimeout(() => sparkle.remove(), 800);
+        });
+
+        // === TYPEWRITER (Preserved) ===
+        function initTypewriter(id, phrases) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            let pIdx = 0, cIdx = 0, isTyping = true;
+            function type() {
+                const current = phrases[pIdx];
+                if (isTyping) {
+                    if (cIdx < current.length) {
+                        el.textContent += current.charAt(cIdx++);
+                        setTimeout(type, 100);
+                    } else {
+                        isTyping = false;
+                        setTimeout(type, 2000);
                     }
                 } else {
-                    clearTimeout(contactTypeTimeout);
-                    contactHeadingText.textContent = '';
-                    contactCharIndex = 0;
-                    isContactTyping = true;
-                }
-            });
-        }, { threshold: 0.5 });
-        contactObserver.observe(contactHeadingText);
-
-        function typeContact() {
-            const currentPhrase = contactPhrases[contactPhraseIndex];
-            if (isContactTyping) {
-                if (contactCharIndex < currentPhrase.length) {
-                    contactHeadingText.textContent += currentPhrase.charAt(contactCharIndex);
-                    contactCharIndex++;
-                    contactTypeTimeout = setTimeout(typeContact, 100);
-                } else {
-                    isContactTyping = false;
-                    contactTypeTimeout = setTimeout(eraseContact, 1000);
+                    if (cIdx > 0) {
+                        el.textContent = current.substring(0, --cIdx);
+                        setTimeout(type, 50);
+                    } else {
+                        isTyping = true;
+                        pIdx = (pIdx + 1) % phrases.length;
+                        setTimeout(type, 500);
+                    }
                 }
             }
+            type();
         }
+        // UPDATED DYNAMIC TEXT
+        initTypewriter('dynamic-text', ["Automate", "Design", "Launch", "Scale"]);
 
-        function eraseContact() {
-            const currentPhrase = contactPhrases[contactPhraseIndex];
-            if (contactCharIndex > 0) {
-                contactHeadingText.textContent = currentPhrase.substring(0, contactCharIndex - 1);
-                contactCharIndex--;
-                contactTypeTimeout = setTimeout(eraseContact, 50);
-            } else {
-                contactPhraseIndex = (contactPhraseIndex + 1) % contactPhrases.length;
-                isContactTyping = true;
-                contactTypeTimeout = setTimeout(typeContact, 500);
-            }
-        }
-        
-        // === SCROLL-BASED ANIMATION LOGIC ===
-        const scrollSpinLogo = document.getElementById('scroll-spin-logo');
-        const spinMultiplier = 0.5;
-
-        window.addEventListener('scroll', () => {
-            const scrollY = window.scrollY;
-            const rotation = scrollY * spinMultiplier;
-            scrollSpinLogo.style.transform = `rotate(${rotation}deg)`;
-        });
-        
-        // === THREE.js Dotted Background ===
-        window.onload = function() {
-            document.body.classList.add('loaded');
-
+        // === THREE.JS BG (Preserved) ===
+        (function initThree() {
             const canvas = document.getElementById('bg');
-            const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
-            
-            function onWindowResize() {
-                const width = window.innerWidth;
-                const height = window.innerHeight;
-                camera.aspect = width / height;
-                camera.updateProjectionMatrix();
-                renderer.setSize(width, height);
-            }
-
+            const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
             const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
             camera.position.z = 20;
-
-            onWindowResize();
-            renderer.setPixelRatio(window.devicePixelRatio);
             
-            const particles = new THREE.BufferGeometry();
-            const particleCount = 5000;
-            const positions = new Float32Array(particleCount * 3);
-            const colors = new Float32Array(particleCount * 3);
-
-            const color1 = new THREE.Color(0x111111);
-            const color2 = new THREE.Color(0x222222);
-
-            for (let i = 0; i < particleCount; i++) {
-                positions[i * 3 + 0] = (Math.random() - 0.5) * 200;
-                positions[i * 3 + 1] = (Math.random() - 0.5) * 200;
-                positions[i * 3 + 2] = (Math.random() - 0.5) * 200;
-
-                const color = Math.random() > 0.5 ? color1 : color2;
-                colors[i * 3 + 0] = color.r;
-                colors[i * 3 + 1] = color.g;
-                colors[i * 3 + 2] = color.b;
+            const geometry = new THREE.BufferGeometry();
+            const count = 4000;
+            const pos = new Float32Array(count * 3);
+            const col = new Float32Array(count * 3);
+            const c1 = new THREE.Color(0x2553d6), c2 = new THREE.Color(0x444444);
+            for(let i=0; i<count*3; i+=3) {
+                pos[i] = (Math.random()-0.5)*300; pos[i+1] = (Math.random()-0.5)*300; pos[i+2] = (Math.random()-0.5)*300;
+                const c = Math.random()>0.8 ? c1 : c2;
+                col[i] = c.r; col[i+1] = c.g; col[i+2] = c.b;
             }
+            geometry.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(col, 3));
+            const mat = new THREE.PointsMaterial({ size: 0.6, vertexColors: true, transparent: true, opacity: 0.6 });
+            const mesh = new THREE.Points(geometry, mat);
+            scene.add(mesh);
 
-            particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-            particles.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-            
-            const particleMaterial = new THREE.PointsMaterial({
-                size: 0.8,
-                vertexColors: true,
-                blending: THREE.AdditiveBlending,
-                transparent: true,
-                opacity: 0.8
-            });
-
-            const particleMesh = new THREE.Points(particles, particleMaterial);
-            scene.add(particleMesh);
-
-            let mouseX = 0, mouseY = 0;
-            const windowHalfX = window.innerWidth / 2;
-            const windowHalfY = window.innerHeight / 2;
-
-            document.addEventListener('mousemove', onDocumentMouseMove, false);
-
-            function onDocumentMouseMove(event) {
-                mouseX = (event.clientX - windowHalfX) * 0.1;
-                mouseY = (event.clientY - windowHalfY) * 0.1;
-            }
-
-            window.addEventListener('resize', onWindowResize, false);
+            let mx = 0, my = 0;
+            document.addEventListener('mousemove', e => { mx = (e.clientX - window.innerWidth/2)*0.05; my = (e.clientY - window.innerHeight/2)*0.05; });
+            window.addEventListener('resize', () => { camera.aspect = window.innerWidth/window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); });
+            renderer.setSize(window.innerWidth, window.innerHeight);
 
             function animate() {
                 requestAnimationFrame(animate);
-
-                particleMesh.rotation.y += 0.001;
-                particleMesh.rotation.x += 0.0005;
-
-                const positions = particleMesh.geometry.attributes.position.array;
-                for (let i = 0; i < particleCount; i++) {
-                    positions[i * 3 + 0] += 0.01;
-                    if (positions[i * 3 + 0] > 100) {
-                        positions[i * 3 + 0] = -100;
-                    }
-                }
-                particleMesh.geometry.attributes.position.needsUpdate = true;
-                
-                camera.position.x += (mouseX - camera.position.x) * 0.05;
-                camera.position.y += (-mouseY - camera.position.y) * 0.05;
+                mesh.rotation.y += 0.0005; mesh.rotation.x += 0.0002;
+                camera.position.x += (mx - camera.position.x)*0.05; camera.position.y += (-my - camera.position.y)*0.05;
                 camera.lookAt(scene.position);
-                
                 renderer.render(scene, camera);
             }
             animate();
-        };
+        })();
 
-        // === WHATSAPP FORM SUBMISSION ===
-        const contactForm = document.getElementById('contact-form');
-        const validationMessage = document.getElementById('validation-message');
-        const phoneNumber = '9372998318';
-
-        contactForm.addEventListener('submit', (event) => {
-            event.preventDefault(); // Prevent the default form submission
-
-            // Check if required fields are filled
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const city = document.getElementById('city').value;
-            
+        // === CONTACT FORM HANDLERS ===
+        const getVal = (id) => document.getElementById(id).value.trim();
+        const msg = document.getElementById('validation-message');
+        
+        function validateForm() {
+            const name = getVal('name'), email = getVal('email'), city = getVal('city');
             if (!name || !email || !city) {
-                validationMessage.style.display = 'block';
-                validationMessage.textContent = 'Please fill out all required fields (*).';
-                return;
+                msg.textContent = 'Please complete all required fields.';
+                msg.classList.remove('hidden', 'text-aume-blue', 'bg-aume-blue/20');
+                msg.classList.add('text-red-500', 'bg-red-500/20', 'block');
+                return false;
             }
+            return { 
+                name, 
+                email, 
+                city, 
+                phone: getVal('contact-number') || 'N/A',
+                company: getVal('company-name') || 'N/A', 
+                linkedin: getVal('linkedin') || 'N/A' 
+            };
+        }
 
-            // Get form values
-            const company = document.getElementById('company-name').value;
-            const linkedin = document.getElementById('linkedin').value;
+        function showSuccess(text) {
+             msg.textContent = text;
+             msg.classList.remove('hidden', 'text-red-500', 'bg-red-500/20');
+             msg.classList.add('text-aume-blue', 'bg-aume-blue/20', 'block');
+             setTimeout(() => msg.classList.add('hidden'), 5000);
+             document.getElementById('contact-form').reset();
+        }
 
-            // Construct the message for WhatsApp
-            const message = `Name: ${name}%0ACompany: ${company || 'N/A'}%0AEmail: ${email}%0ALinkedIn: ${linkedin || 'N/A'}%0ACity: ${city}`;
+        // WhatsApp Handler
+        document.getElementById('whatsapp-btn').addEventListener('click', (e) => {
+            e.preventDefault();
+            const data = validateForm();
+            if (!data) return;
             
-            // Construct the WhatsApp URL
-            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-
-            // Open WhatsApp in a new tab
-            window.open(whatsappUrl, '_blank');
-            
-            // Clear the form and show a success message
-            contactForm.reset();
-            validationMessage.style.display = 'block';
-            validationMessage.style.color = '#25d366'; // Green color for success
-            validationMessage.textContent = 'Opening WhatsApp with your details...';
+            const text = `*New Inquiry from AumVerse*\n\nName: ${data.name}\nEmail: ${data.email}\nContact: ${data.phone}\nCity: ${data.city}\nCompany: ${data.company}\nLinkedIn: ${data.linkedin}`;
+            window.open(`https://wa.me/919372998318?text=${encodeURIComponent(text)}`, '_blank');
+            showSuccess('Opening WhatsApp...');
         });
     </script>
 </body>
