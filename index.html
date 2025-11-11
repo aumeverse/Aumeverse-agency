@@ -23,7 +23,7 @@
                         }
                     },
                     animation: {
-                        'spin-slow': 'spin 30s linear infinite', /* Slower spin */
+                        'spin-slow': 'spin 30s linear infinite', /* Slowed down from 20s */
                         'float': 'floating 4s ease-in-out infinite',
                         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                     },
@@ -131,10 +131,41 @@
             0% { transform: scale(0.2); opacity: 0.8; }
             100% { transform: scale(2); opacity: 0; }
         }
-        .blinking-cursor {
-            animation: blink 1s step-end infinite;
+       
+        /* Text Roller Animation */
+        .roller-viewport {
+            display: inline-flex; /* Changed from inline-block */
+            vertical-align: top; /* Aligns with the "We" text */
+            height: 1.3em; /* Match line-height of h1 */
+            overflow: hidden;
+            position: relative; /* Needed for absolute positioning of children */
         }
-        @keyframes blink { 50% { opacity: 0; } }
+
+        .roller-list {
+            padding: 0;
+            margin: 0;
+            list-style-type: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            animation: roll 10s cubic-bezier(0.7, 0, 0.3, 1) infinite;
+        }
+        
+        .roller-item {
+            display: block;
+            text-align: left;
+            height: 1.3em; /* Match viewport height */
+            line-height: 1.3em; /* Match viewport height */
+        }
+
+        @keyframes roll {
+            0%, 20% { transform: translateY(0); } /* Automate */
+            25%, 45% { transform: translateY(-1.3em); } /* Design */
+            50%, 70% { transform: translateY(-2.6em); } /* Launch */
+            75%, 95% { transform: translateY(-3.9em); } /* Scale */
+            100% { transform: translateY(-5.2em); } /* Back to Automate */
+        }
 
         /* Menu Button Animations */
         .menu-open #line1 { transform: rotate(-45deg) translate(-5px, 5px); }
@@ -190,26 +221,34 @@
         <!-- HEADER & HERO COMBINED -->
         <header id="home" class="flex flex-col items-center pt-20 px-4 mb-24">
             <!-- Spinning Logo -->
-            <a href="#home" class="z-0 opacity-80 flex justify-center w-full">
-                <!-- Logo size larger on mobile (w-36) -->
+            <a href="#home" class="z-0 opacity-80">
+                <!-- Increased mobile size, slowed spin -->
                 <img class="w-36 md:w-64 animate-spin-slow" src="https://i.ibb.co/YTQMWQVD/final-logo-02.png" alt="AumVerse Spiral" />
             </a>
             <!-- Main Brand Logo: Adjusted -mt for mobile balancing -->
-            <a href="#home" class="z-10 mb-4 -mt-14 md:-mt-56 flex justify-center w-full">
+            <!-- Further reduced mb-1 to mb-0 -->
+            <a href="#home" class="z-10 mb-0 -mt-14 md:-mt-56 flex justify-center w-full">
+                <!-- Sized for mobile first, ensuring it's not too wide -->
                 <img class="w-[85%] max-w-[320px] md:max-w-none md:w-[750px] animate-float" id="scroll-spin-logo" src="https://i.ibb.co/yFYj2dHt/final-logo-04.png" alt="AumVerse Logo" />
             </a>
             
             <!-- HERO TEXT -->
-            <div class="text-center w-full">
+            <!-- Added negative top margin here to pull text block up -->
+            <div class="text-center w-full -mt-4 md:-mt-8">
                 <!-- Roller Container: Fixed height [1.3em] to match the 'We' text line-height, overflow hidden is crucial -->
-                <h1 class="text-3xl sm:text-4xl md:text-7xl font-black mb-4 leading-tight flex flex-wrap items-center justify-center gap-2 md:gap-4">
+                <!-- Further reduced mb-2 to mb-1 -->
+                <h1 class="text-3xl sm:text-4xl md:text-7xl font-black mb-1 leading-tight flex flex-wrap items-center justify-center gap-2 md:gap-4">
                     <!-- Shifted "We" further right on desktop -->
                     <span class="md:ml-48">We</span>
-                    <span id="roller-viewport" class="text-aume-blue inline-block text-left min-w-[180px] sm:min-w-[230px] md:min-w-[480px] h-[1.3em] overflow-hidden relative align-middle">
-                        <!-- Roller content injected by JS -->
+                    <span class="text-aume-blue roller-viewport min-w-[160px] md:min-w-[450px]">
+                        <ul class="roller-list" id="dynamic-text-roller">
+                            <!-- Items will be injected by JS, but one is here for structure -->
+                            <li class="roller-item">Automate</li>
+                        </ul>
                     </span>
                 </h1>
-                <h2 class="text-xl md:text-3xl font-bold text-gray-200 mb-3 reveal px-4">
+                <!-- Further reduced mb-2 to mb-1 -->
+                <h2 class="text-xl md:text-3xl font-bold text-gray-200 mb-1 reveal px-4">
                     Where Innovation Meets Excellence
                 </h2>
                 <p class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto reveal px-4">
@@ -262,7 +301,7 @@
 
         <!-- AUMESTACK SECTION (First) -->
         <section id="aumestack" class="container mx-auto px-4 mb-32">
-            <!-- Removed .tilt-card class -->
+            <!-- Removed tilt-card class -->
             <div class="glass-card glass-card-hover rounded-3xl overflow-hidden transition-all duration-500 reveal">
                 <!-- Distinctive header for Stack -->
                 <div class="bg-gradient-to-r from-aume-blue/50 to-cyan-900/50 p-10 md:p-16 text-center md:text-left">
@@ -271,7 +310,7 @@
                             <h3 class="text-4xl md:text-6xl font-black mb-4">AUMESTACK</h3>
                             <p class="text-xl md:text-2xl font-medium text-cyan-200">Engineering Growth, Architecting Success</p>
                         </div>
-                         <!-- Changed button text to "VISIT" -->
+                         <!-- Changed button text -->
                          <a href="https://aumestack.netlify.app/" target="_blank" class="bg-white text-aume-dark px-8 py-4 rounded-full font-black hover:scale-105 transition-transform flex items-center gap-2">
                             VISIT <span>→</span>
                         </a>
@@ -285,16 +324,9 @@
                         We're growth partners who architect your success from the ground up. Using cutting-edge automation, AI-driven insights, and battle-tested strategies, we turn ambitious startups into category leaders and plateaued businesses into profit machines.
                     </p>
 
-                    <!-- Services Grid with Professional SVGs -->
+                    <!-- Services Grid with Professional SVGs - REORDERED -->
                     <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                        <div class="glass-card p-6 rounded-2xl hover:border-cyan-500/50 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-cyan-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                            <h4 class="font-bold text-lg mb-2">Business Automation</h4>
-                            <p class="text-sm text-gray-400">Turn weeks of work into minutes. Scale without chaos.</p>
-                        </div>
+                        <!-- 1. AI Integration (Moved from 2) -->
                         <div class="glass-card p-6 rounded-2xl hover:border-cyan-500/50 transition-colors">
                              <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-cyan-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                               <path stroke-linecap="round" stroke-linejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
@@ -302,13 +334,7 @@
                             <h4 class="font-bold text-lg mb-2">AI Integration</h4>
                             <p class="text-sm text-gray-400">Future-proof your business. Automate & optimize everything.</p>
                         </div>
-                        <div class="glass-card p-6 rounded-2xl hover:border-cyan-500/50 transition-colors">
-                             <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-cyan-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                            </svg>
-                            <h4 class="font-bold text-lg mb-2">Launch Strategy</h4>
-                            <p class="text-sm text-gray-400">From zero to one. Data-driven roadmaps for a flawless market entry.</p>
-                        </div>
+                        <!-- 2. AI Business Consulting (Moved from 4) -->
                          <div class="glass-card p-6 rounded-2xl hover:border-cyan-500/50 transition-colors">
                              <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-cyan-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                               <path stroke-linecap="round" stroke-linejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -316,18 +342,28 @@
                             <h4 class="font-bold text-lg mb-2">AI Business Consulting</h4>
                             <p class="text-sm text-gray-400">Future-proof your operations. Strategic AI implementation for exponential advantage.</p>
                         </div>
-                    </div>
-                    <!-- Services Grid with Professional SVGs -->
-                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                        <!-- 3. Business Funnel (Moved from 1, renamed) -->
                         <div class="glass-card p-6 rounded-2xl hover:border-cyan-500/50 transition-colors">
-                            <h4 class="font-bold text-lg mb-2">AI Business Consulting</h4>
-                            <p class="text-sm text-gray-400">Future-proof your operations. Strategic AI implementation for exponential advantage.</p>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-cyan-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            <h4 class="font-bold text-lg mb-2">Business Funnel</h4>
+                            <p class="text-sm text-gray-400">Turn weeks of work into minutes. Scale without chaos.</p>
+                        </div>
+                        <!-- 4. Launch System (Moved from 3, renamed) -->
+                        <div class="glass-card p-6 rounded-2xl hover:border-cyan-500/50 transition-colors">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-cyan-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                            </svg>
+                            <h4 class="font-bold text-lg mb-2">Launch System</h4>
+                            <p class="text-sm text-gray-400">From zero to one. Data-driven roadmaps for a flawless market entry.</p>
                         </div>
                     </div>
                     
                     <!-- Added line -->
                     <p class="text-center text-gray-400 text-md mt-8">
-                        Visit the <a href="https://aumestack.netlify.app/" target="_blank" class="font-bold text-cyan-400 hover:text-cyan-300 transition-colors">AUMESTACK page</a> for more information.
+                        Visit the Aumestack page for more information on our growth services.
                     </p>
                 </div>
             </div>
@@ -335,7 +371,7 @@
 
         <!-- AUMEDESIGN SECTION (Second) -->
         <section id="aumedesign" class="container mx-auto px-4 mb-32">
-            <!-- Removed .tilt-card class -->
+            <!-- Removed tilt-card class -->
             <div class="glass-card glass-card-hover rounded-3xl overflow-hidden transition-all duration-500 reveal">
                 <!-- Distinctive header for Design -->
                 <div class="bg-gradient-to-r from-blue-950/50 to-aume-blue/50 p-10 md:p-16 text-center md:text-left">
@@ -380,6 +416,7 @@
                             <h4 class="font-bold text-lg mb-2">Packaging</h4>
                             <p class="text-sm text-gray-400">Transform shelves into showrooms. Make products impossible to ignore.</p>
                         </div>
+                         <!-- Renamed to Creative Brand Strategy -->
                          <div class="glass-card p-6 rounded-2xl hover:border-aume-blue/50 transition-colors">
                              <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                               <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -388,11 +425,10 @@
                             <p class="text-sm text-gray-400">Position your brand where it belongs—at the very top.</p>
                         </div>
                     </div>
-                    <!-- Removed duplicate grid that contained only one item -->
                     
                     <!-- Added line -->
                     <p class="text-center text-gray-400 text-md mt-8">
-                        Visit the <a href="https://aumedesign.netlify.app/" target="_blank" class="font-bold text-blue-300 hover:text-blue-200 transition-colors">AUMEDESIGN page</a> for more information.
+                        Visit the Aumedesign studio to see our full portfolio.
                     </p>
                 </div>
             </div>
@@ -510,7 +546,7 @@
                         <button type="submit" id="whatsapp-btn" class="w-full py-4 bg-aume-blue hover:bg-blue-700 rounded-2xl font-black text-lg transition-all flex items-center justify-center gap-3">
                             <span>Launch via WhatsApp</span>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
-                                <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
+                                <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
                             </svg>
                         </button>
                     </div>
@@ -520,7 +556,7 @@
         </section>
 
         <footer class="text-center pb-10 text-gray-500 text-sm">
-            <p>© 2025 AumVerse. All rights reserved.</p>
+            <p>© 2023 AumVerse. All rights reserved.</p>
             <p>Architecting Futures across the Globe.</p>
         </footer>
 
@@ -583,8 +619,8 @@
         const revealObserver = new IntersectionObserver(revealCallback, { threshold: 0.15 });
         document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-        // === 3D TILT EFFECT (REMOVED) ===
-        // The script block for .tilt-card has been removed.
+        // === 3D TILT EFFECT (Removed) ===
+        // The .tilt-card class and its corresponding JS listeners have been removed.
 
         // === CURSOR EFFECTS (Preserved & Optimized) ===
         let lastSparkle = 0;
@@ -603,53 +639,30 @@
             setTimeout(() => sparkle.remove(), 800);
         });
 
-        // === NEW ROLLER EFFECT (Replaces Typewriter) ===
+        // === TEXT ROLLER ===
         function initRoller(id, phrases) {
-            const container = document.getElementById(id);
-            if (!container) return;
-
-            // Clear initial content
-            container.innerHTML = '';
-
-            // Create inner wrapper for sliding
-            const wrapper = document.createElement('div');
-            // Use a snappy bezier curve for a 'mechanical' roller feel
-            wrapper.className = 'transition-transform duration-[800ms] ease-[cubic-bezier(0.23,1,0.32,1)] absolute top-0 left-0 w-full';
-            container.appendChild(wrapper);
-
-            // Populate with words, ensuring height matches container's [1.3em]
-            phrases.forEach(word => {
-                const item = document.createElement('div');
-                item.textContent = word;
-                item.className = 'h-[1.3em] flex items-center';
-                wrapper.appendChild(item);
+            const el = document.getElementById(id);
+            if (!el) return;
+            
+            // Clear placeholder
+            el.innerHTML = '';
+            
+            // Populate list
+            phrases.forEach(phrase => {
+                const li = document.createElement('li');
+                li.className = 'roller-item';
+                li.textContent = phrase;
+                el.appendChild(li);
             });
-            // Add clone of first item to end for infinite loop illusion
-            const clone = wrapper.children[0].cloneNode(true);
-            wrapper.appendChild(clone);
-
-            let curIdx = 0;
-            const itemHeightEm = 1.3; // Must match the height class above
-
-            setInterval(() => {
-                curIdx++;
-                // Animate to next word
-                wrapper.style.transition = 'transform 800ms cubic-bezier(0.23, 1, 0.32, 1)';
-                wrapper.style.transform = `translateY(-${curIdx * itemHeightEm}em)`;
-
-                // If we reached the clone, reset instantly after animation completes
-                if (curIdx === phrases.length) {
-                    setTimeout(() => {
-                        wrapper.style.transition = 'none';
-                        curIdx = 0;
-                        wrapper.style.transform = `translateY(0)`;
-                    }, 800); // Match duration of transition
-                }
-            }, 2500); // Time between roles
+            
+            // Add the first item again at the end to create a seamless loop
+            const firstItem = document.createElement('li');
+            firstItem.className = 'roller-item';
+            firstItem.textContent = phrases[0];
+            el.appendChild(firstItem);
         }
+        initRoller('dynamic-text-roller', ["Automate", "Design", "Launch", "Scale"]);
 
-        // Initialize the roller with keywords
-        initRoller('roller-viewport', ["Automate", "Design", "Launch", "Scale"]);
 
         // === THREE.JS BG (Preserved) ===
         (function initThree() {
