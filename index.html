@@ -23,7 +23,7 @@
                         }
                     },
                     animation: {
-                        'spin-slow': 'spin 20s linear infinite',
+                        'spin-slow': 'spin 30s linear infinite', /* Slower spin */
                         'float': 'floating 4s ease-in-out infinite',
                         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                     },
@@ -191,7 +191,8 @@
         <header id="home" class="flex flex-col items-center pt-20 px-4 mb-24">
             <!-- Spinning Logo -->
             <a href="#home" class="z-0 opacity-80 flex justify-center w-full">
-                <img class="w-28 md:w-64 animate-spin-slow" src="https://i.ibb.co/YTQMWQVD/final-logo-02.png" alt="AumVerse Spiral" />
+                <!-- Logo size larger on mobile (w-36) -->
+                <img class="w-36 md:w-64 animate-spin-slow" src="https://i.ibb.co/YTQMWQVD/final-logo-02.png" alt="AumVerse Spiral" />
             </a>
             <!-- Main Brand Logo: Adjusted -mt for mobile balancing -->
             <a href="#home" class="z-10 mb-4 -mt-14 md:-mt-56 flex justify-center w-full">
@@ -202,7 +203,8 @@
             <div class="text-center w-full">
                 <!-- Roller Container: Fixed height [1.3em] to match the 'We' text line-height, overflow hidden is crucial -->
                 <h1 class="text-3xl sm:text-4xl md:text-7xl font-black mb-4 leading-tight flex flex-wrap items-center justify-center gap-2 md:gap-4">
-                    <span class="md:ml-32">We</span>
+                    <!-- Shifted "We" further right on desktop -->
+                    <span class="md:ml-48">We</span>
                     <span id="roller-viewport" class="text-aume-blue inline-block text-left min-w-[180px] sm:min-w-[230px] md:min-w-[480px] h-[1.3em] overflow-hidden relative align-middle">
                         <!-- Roller content injected by JS -->
                     </span>
@@ -260,7 +262,8 @@
 
         <!-- AUMESTACK SECTION (First) -->
         <section id="aumestack" class="container mx-auto px-4 mb-32">
-            <div class="glass-card glass-card-hover rounded-3xl overflow-hidden transition-all duration-500 reveal tilt-card">
+            <!-- Removed .tilt-card class -->
+            <div class="glass-card glass-card-hover rounded-3xl overflow-hidden transition-all duration-500 reveal">
                 <!-- Distinctive header for Stack -->
                 <div class="bg-gradient-to-r from-aume-blue/50 to-cyan-900/50 p-10 md:p-16 text-center md:text-left">
                      <div class="flex flex-col md:flex-row justify-between items-center gap-8">
@@ -268,8 +271,9 @@
                             <h3 class="text-4xl md:text-6xl font-black mb-4">AUMESTACK</h3>
                             <p class="text-xl md:text-2xl font-medium text-cyan-200">Engineering Growth, Architecting Success</p>
                         </div>
+                         <!-- Changed button text to "VISIT" -->
                          <a href="https://aumestack.netlify.app/" target="_blank" class="bg-white text-aume-dark px-8 py-4 rounded-full font-black hover:scale-105 transition-transform flex items-center gap-2">
-                            SCALE NOW <span>→</span>
+                            VISIT <span>→</span>
                         </a>
                     </div>
                 </div>
@@ -313,13 +317,26 @@
                             <p class="text-sm text-gray-400">Future-proof your operations. Strategic AI implementation for exponential advantage.</p>
                         </div>
                     </div>
+                    <!-- Services Grid with Professional SVGs -->
+                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                        <div class="glass-card p-6 rounded-2xl hover:border-cyan-500/50 transition-colors">
+                            <h4 class="font-bold text-lg mb-2">AI Business Consulting</h4>
+                            <p class="text-sm text-gray-400">Future-proof your operations. Strategic AI implementation for exponential advantage.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Added line -->
+                    <p class="text-center text-gray-400 text-md mt-8">
+                        Visit the <a href="https://aumestack.netlify.app/" target="_blank" class="font-bold text-cyan-400 hover:text-cyan-300 transition-colors">AUMESTACK page</a> for more information.
+                    </p>
                 </div>
             </div>
         </section>
 
         <!-- AUMEDESIGN SECTION (Second) -->
         <section id="aumedesign" class="container mx-auto px-4 mb-32">
-            <div class="glass-card glass-card-hover rounded-3xl overflow-hidden transition-all duration-500 reveal tilt-card">
+            <!-- Removed .tilt-card class -->
+            <div class="glass-card glass-card-hover rounded-3xl overflow-hidden transition-all duration-500 reveal">
                 <!-- Distinctive header for Design -->
                 <div class="bg-gradient-to-r from-blue-950/50 to-aume-blue/50 p-10 md:p-16 text-center md:text-left">
                     <div class="flex flex-col md:flex-row justify-between items-center gap-8">
@@ -367,10 +384,16 @@
                              <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                               <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            <h4 class="font-bold text-lg mb-2">Brand Strategy</h4>
+                            <h4 class="font-bold text-lg mb-2">Creative Brand Strategy</h4>
                             <p class="text-sm text-gray-400">Position your brand where it belongs—at the very top.</p>
                         </div>
                     </div>
+                    <!-- Removed duplicate grid that contained only one item -->
+                    
+                    <!-- Added line -->
+                    <p class="text-center text-gray-400 text-md mt-8">
+                        Visit the <a href="https://aumedesign.netlify.app/" target="_blank" class="font-bold text-blue-300 hover:text-blue-200 transition-colors">AUMEDESIGN page</a> for more information.
+                    </p>
                 </div>
             </div>
         </section>
@@ -560,23 +583,8 @@
         const revealObserver = new IntersectionObserver(revealCallback, { threshold: 0.15 });
         document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-        // === 3D TILT EFFECT (Vanilla JS implementation) ===
-        document.querySelectorAll('.tilt-card').forEach(card => {
-            card.addEventListener('mousemove', e => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                const rotateX = ((y - centerY) / centerY) * -5; // Max 5deg rotation
-                const rotateY = ((x - centerX) / centerX) * 5;
-
-                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
-            });
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
-            });
-        });
+        // === 3D TILT EFFECT (REMOVED) ===
+        // The script block for .tilt-card has been removed.
 
         // === CURSOR EFFECTS (Preserved & Optimized) ===
         let lastSparkle = 0;
