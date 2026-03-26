@@ -1,747 +1,1406 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>AumVerse | Architecting Futures</title>
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700;900&display=swap" rel="stylesheet"/>
-    <!-- Tailwind CSS -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aumeverse | System & Revenue Automation</title>
+    
+    <!-- Google Fonts: Space Grotesk (Headings) & Inter (Body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS (via CDN) -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind Config -->
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        montserrat: ['Montserrat', 'sans-serif'],
-                    },
                     colors: {
-                        aume: {
-                            blue: '#2553d6',
-                            dark: '#0a0a0a',
-                            light: '#E0E3EB',
-                        }
+                        'neon-harvest': '#5dd62c',
+                        'abyss-core': '#000000',
+                        'polar-mist': '#EFEFEF',
+                        'steel-haze': '#7F8287',
+                        'void-green': '#122023',
                     },
-                    animation: {
-                        'spin-slow': 'spin 30s linear infinite', /* Slowed down from 20s */
-                        'float': 'floating 4s ease-in-out infinite',
-                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                    },
-                    keyframes: {
-                        floating: {
-                            '0%, 100%': { transform: 'translateY(0px)' },
-                            '50%': { transform: 'translateY(-10px)' },
-                        }
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
                     }
                 }
             }
         }
     </script>
+
+    <!-- STRICT DESIGN SYSTEM CORE & ANIMATIONS -->
     <style>
-        /* --- Global Overrides & Utilities --- */
+        :root {
+            --neon-harvest: #5dd62c;
+            --abyss-core: #000000;
+            --polar-mist: #EFEFEF;
+            --steel-haze: #7F8287;
+            --void-green: #122023;
+        }
+
         body {
-            font-family: 'Montserrat', sans-serif;
-            background-color: #000000;
-            color: #FFFFFF;
+            background-color: var(--abyss-core);
+            color: var(--polar-mist);
+            font-family: 'Inter', sans-serif !important;
             overflow-x: hidden;
         }
-        html { scroll-behavior: smooth; }
-        #bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
 
-        /* Preloader Styles */
-        #preloader-overlay {
-            position: fixed;
-            top: 0;
+        ::selection {
+            background-color: var(--neon-harvest);
+            color: var(--abyss-core);
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Space Grotesk', sans-serif !important;
+            letter-spacing: -0.03em;
+        }
+
+        .system-accent {
+            font-weight: 500 !important;
+            letter-spacing: 0.15em !important;
+            text-transform: uppercase;
+        }
+
+        .grid-line-top { border-top: 1px solid rgba(127, 130, 135, 0.2); }
+        .grid-line-bottom { border-bottom: 1px solid rgba(127, 130, 135, 0.2); }
+        .grid-line-all { border: 1px solid rgba(127, 130, 135, 0.2); }
+        .grid-line-right { border-right: 1px solid rgba(127, 130, 135, 0.2); }
+
+        .crosshair { position: relative; }
+        .crosshair::before, .crosshair::after {
+            content: ''; position: absolute; background: rgba(127, 130, 135, 0.5);
+        }
+        .crosshair::before { width: 9px; height: 1px; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .crosshair::after { width: 1px; height: 9px; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+
+        /* Marquee Animations */
+        @keyframes marquee-left {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        @keyframes marquee-right {
+            0% { transform: translateX(-50%); }
+            100% { transform: translateX(0); }
+        }
+        .animate-marquee-left { animation: marquee-left 40s linear infinite; }
+        .animate-marquee-right { animation: marquee-right 40s linear infinite; }
+        .pause-on-hover:hover { animation-play-state: paused; }
+
+        /* Letter-by-Letter Text Reveal */
+        .text-reveal-char { color: var(--steel-haze); transition: color 0.1s ease; }
+        .text-reveal.revealed .text-reveal-char { color: var(--polar-mist); text-shadow: 0 0 10px rgba(239, 239, 239, 0.1); }
+
+        /* System Flow Component Animations */
+        @keyframes bounce-x { 0% { left: 0%; transform: translateX(0); } 100% { left: 100%; transform: translateX(-100%); } }
+        .animate-bounce-x { animation: bounce-x 2.5s ease-in-out infinite alternate; }
+
+        /* Hide scrollbar */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Form Inputs Custom Styling */
+        input[type="date"]::-webkit-calendar-picker-indicator,
+        input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
+
+        /* ========================================= */
+        /* THIN UNDERLINE LOGO DOT ANIMATION         */
+        /* ========================================= */
+        .logo-underline-container {
+            position: relative;
+            display: inline-flex;
+            flex-direction: column;
+            padding-bottom: 4px;
+        }
+        .logo-track {
+            position: absolute;
+            bottom: 0;
             left: 0;
             width: 100%;
-            height: 100%;
-            background-color: #000000;
-            z-index: 9999;
-            display: flex;
+            height: 1px;
+            background: rgba(127, 130, 135, 0.2);
+            overflow: hidden;
+        }
+        .logo-dot {
+            position: absolute;
+            top: -1px;
+            left: 0;
+            width: 4px;
+            height: 3px;
+            background-color: var(--neon-harvest);
+            box-shadow: 0 0 4px var(--neon-harvest);
+            animation: scanline 2.5s ease-in-out infinite alternate;
+        }
+        @keyframes scanline {
+            0% { left: 0; }
+            100% { left: calc(100% - 4px); }
+        }
+
+        /* ========================================= */
+        /* CUSTOM BUTTONS (Hero Section)             */
+        /* ========================================= */
+        
+        /* Btn-1: Bubbles (View Case Studies) */
+        .bubbles {
+            --c1: var(--abyss-core);
+            --c2: var(--neon-harvest);
+            padding: 0.8rem 2.2rem;
+            font-size: 14px;
+            background-color: transparent;
+            border: 2px solid var(--c2);
+            border-radius: 4px;
+            cursor: pointer;
+            overflow: hidden;
+            position: relative;
+            transition: 300ms cubic-bezier(0.83, 0, 0.17, 1);
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            display: inline-flex;
             justify-content: center;
             align-items: center;
-            transition: opacity 0.5s ease-out, visibility 0.5s;
-        }
-        #preloader-overlay.fade-out {
-            opacity: 0;
-            visibility: hidden;
         }
 
-        /* Loader from Uiverse.io by bociKond (Brand Color Adapted) */ 
-        .loader {
-            width: 44.8px;
-            height: 44.8px;
-            color: #2553d6; /* Adapted to AumVerse Blue */
+        .bubbles > .text {
+            color: var(--c2);
             position: relative;
-            background: radial-gradient(11.2px,currentColor 94%,#0000);
+            z-index: 1;
+            transition: color 700ms cubic-bezier(0.83, 0, 0.17, 1);
         }
-        .loader:before {
-            content: '';
-            position: absolute;
-            inset: 0;
+
+        .bubbles::before,
+        .bubbles::after {
+            content: "";
+            width: 150%;
+            aspect-ratio: 1/1;
+            transform: scale(0);
+            transition: 1000ms cubic-bezier(0.76, 0, 0.24, 1);
+            background-color: var(--c2);
             border-radius: 50%;
-            background: radial-gradient(10.08px at bottom right,#0000 94%,currentColor) top left,
-                        radial-gradient(10.08px at bottom left ,#0000 94%,currentColor) top right,
-                        radial-gradient(10.08px at top right,#0000 94%,currentColor) bottom left,
-                        radial-gradient(10.08px at top left ,#0000 94%,currentColor) bottom right;
-            background-size: 22.4px 22.4px;
-            background-repeat: no-repeat;
-            animation: loader 1.5s infinite cubic-bezier(0.3,1,0,1);
-        }
-        @keyframes loader {
-            33% { inset: -11.2px; transform: rotate(0deg); }
-            66% { inset: -11.2px; transform: rotate(90deg); }
-            100% { inset: 0; transform: rotate(90deg); }
-        }
-
-        /* Glassmorphism Utilities */
-        .glass-card {
-            background: rgba(17, 17, 17, 0.75);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        }
-        .glass-card-hover:hover {
-            border-color: rgba(37, 83, 214, 0.5);
-            box-shadow: 0 8px 32px 0 rgba(37, 83, 214, 0.25);
-        }
-
-        /* Custom Animations */
-        .reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
-        }
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Cursor Effects */
-        .cursor-pop {
-            position: fixed;
-            background-color: rgba(37, 83, 214, 0.6);
-            border-radius: 50%;
-            pointer-events: none;
-            animation: pop-out 0.8s forwards ease-out;
-            z-index: 9999;
-        }
-        @keyframes pop-out {
-            0% { transform: scale(0.2); opacity: 0.8; }
-            100% { transform: scale(2); opacity: 0; }
-        }
-       
-        /* Text Roller Animation */
-        .roller-viewport {
-            display: inline-flex; /* Changed from inline-block */
-            vertical-align: top; /* Aligns with the "We" text */
-            height: 1.3em; /* Match line-height of h1 */
-            overflow: hidden;
-            position: relative; /* Needed for absolute positioning of children */
-        }
-
-        .roller-list {
-            padding: 0;
-            margin: 0;
-            list-style-type: none;
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            animation: roll 10s cubic-bezier(0.7, 0, 0.3, 1) infinite;
+            translate: -50% -50%;
         }
-        
-        .roller-item {
-            display: block;
-            text-align: left;
-            height: 1.3em; /* Match viewport height */
-            line-height: 1.3em; /* Match viewport height */
+        .bubbles::before { top: 0; left: 0; }
+        .bubbles::after { top: 100%; left: 100%; }
+
+        .bubbles:hover > .text { color: var(--c1); }
+        .bubbles:hover::before,
+        .bubbles:hover::after { transform: scale(1); }
+
+        .bubbles:active {
+            transform: scale(0.98);
+            filter: brightness(0.9);
         }
 
-        @keyframes roll {
-            0%, 20% { transform: translateY(0); } /* Automate */
-            25%, 45% { transform: translateY(-1.3em); } /* Design */
-            50%, 70% { transform: translateY(-2.6em); } /* Launch */
-            75%, 95% { transform: translateY(-3.9em); } /* Scale */
-            100% { transform: translateY(-5.2em); } /* Back to Automate */
+        /* Btn-2: Custom 3D Gradient (Book Intro Call) */
+        .custom-btn {
+            color: var(--abyss-core);
+            border-radius: 4px;
+            padding: 0.8rem 2.2rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: inset 2px 2px 2px 0px rgba(255,255,255,.3),
+             7px 7px 20px 0px rgba(0,0,0,.1),
+             4px 4px 5px 0px rgba(0,0,0,.1);
+            outline: none;
+            font-size: 14px;
+            border: 2px solid transparent;
         }
 
-        /* Menu Button Animations */
-        .menu-open #line1 { transform: rotate(-45deg) translate(-5px, 5px); }
-        .menu-open #line2 { opacity: 0; }
-        .menu-open #line3 { transform: rotate(45deg) translate(-5px, -5px); }
+        .btn-2 {
+            background: linear-gradient(0deg, var(--neon-harvest) 0%, #6eea36 100%);
+        }
+
+        .btn-2:hover {
+            box-shadow: 4px 4px 6px 0 rgba(93,214,44,.3),
+                        -4px -4px 6px 0 rgba(0, 0, 0, .5), 
+              inset -4px -4px 6px 0 rgba(255,255,255,.2),
+              inset 4px 4px 6px 0 rgba(0, 0, 0, .4);
+        }
     </style>
 </head>
-<body class="opacity-0 transition-opacity duration-1000 ease-in-out">
-    <!-- PRELOADER -->
-    <div id="preloader-overlay">
-        <div class="loader"></div>
-    </div>
+<body class="flex flex-col min-h-screen">
 
-    <!-- Three.js Canvas Background -->
-    <canvas id="bg"></canvas>
+    <!-- 1. Top Navigation (Sticky & Clean/Thin) -->
+    <nav class="fixed top-0 w-full z-50 bg-abyss-core/80 backdrop-blur-md grid-line-bottom">
+        <div class="max-w-7xl mx-auto px-6 py-2 flex justify-between items-center relative">
+            <div class="absolute top-0 left-6 crosshair translate-y-[-50%]"></div>
+            <div class="absolute bottom-0 right-6 crosshair translate-y-[50%]"></div>
 
-    <!-- FLOATING MENU BUTTON -->
-    <button id="menu-toggle" class="fixed top-6 right-6 z-[110] w-14 h-14 glass-card rounded-full flex items-center justify-center transition-transform duration-300 hover:scale-105 active:scale-95 group" aria-label="Toggle Menu">
-        <div class="relative w-6 h-5 flex flex-col justify-between items-center overflow-hidden">
-            <span id="line1" class="w-full h-0.5 bg-white rounded-full transition-all duration-300"></span>
-            <span id="line2" class="w-full h-0.5 bg-white rounded-full transition-all duration-300"></span>
-            <span id="line3" class="w-full h-0.5 bg-white rounded-full transition-all duration-300"></span>
+            <!-- Mobile Centered Services Link -->
+            <button onclick="navigate('home'); setTimeout(()=>document.getElementById('services').scrollIntoView(), 100);" class="md:hidden absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-sans font-medium text-xs text-steel-haze hover:text-polar-mist transition-colors">
+                Services
+            </button>
+
+            <div class="flex items-center gap-12 w-full">
+                <!-- Image Logo with Thin Underline Dot Scan Animation -->
+                <button onclick="navigate('home')" class="transition-opacity hover:opacity-80 whitespace-nowrap flex items-center py-1.5 px-2">
+                    <div class="logo-underline-container">
+                        <img src="https://i.ibb.co/XZLH0BMM/2222222222.png" alt="Aumeverse Logo" class="h-4 md:h-5 w-auto object-contain relative z-10">
+                        <div class="logo-track">
+                            <div class="logo-dot"></div>
+                        </div>
+                    </div>
+                </button>
+                
+                <!-- Nav Order: Cases, Services, Product (Grouped Cleanly) -->
+                <div class="hidden md:flex flex-grow justify-end mr-10 font-sans font-medium text-xs text-steel-haze">
+                    <div class="flex gap-10 items-center">
+                        <button onclick="navigate('cases')" class="hover:text-polar-mist transition-colors nav-link" data-target="cases">[ Cases ]</button>
+                        <button onclick="navigate('home'); setTimeout(()=>document.getElementById('services').scrollIntoView(), 100);" class="hover:text-polar-mist transition-colors">Services</button>
+                        <button onclick="navigate('products')" class="hover:text-polar-mist transition-colors nav-link" data-target="products">Product</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="hidden md:block">
+                <!-- Clean Normal Button applied here -->
+                <button onclick="document.getElementById('connect-form-wrapper').scrollIntoView({behavior: 'smooth'})" class="bg-neon-harvest text-abyss-core px-6 py-2.5 font-bold text-xs font-sans hover:bg-polar-mist transition-colors shadow-[0_0_10px_rgba(93,214,44,0.2)]">
+                    Book Intro Call
+                </button>
+            </div>
+            <button class="md:hidden text-polar-mist ml-6" id="mobile-menu-btn">
+                <i data-lucide="menu" id="menu-icon" class="w-5 h-5"></i>
+            </button>
         </div>
-    </button>
-
-    <!-- SIDE MENU OVERLAY & DRAWER -->
-    <div id="menu-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] opacity-0 pointer-events-none transition-opacity duration-500"></div>
-    <nav id="side-menu" class="fixed top-0 right-0 h-full w-full sm:w-96 glass-card border-l border-white/10 z-[105] transform translate-x-full transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) flex flex-col justify-center p-8 sm:p-12">
-        <ul class="space-y-8 text-2xl md:text-3xl font-black text-right">
-            <li class="menu-link-wrapper translate-x-10 opacity-0 transition-all duration-500 delay-[100ms]">
-                <a href="#home" class="menu-link hover:text-aume-blue transition-colors inline-block">Home</a>
-            </li>
-            <li class="menu-link-wrapper translate-x-10 opacity-0 transition-all duration-500 delay-[150ms]">
-                <a href="#about" class="menu-link hover:text-aume-blue transition-colors inline-block">About</a>
-            </li>
-            <li class="menu-link-wrapper translate-x-10 opacity-0 transition-all duration-500 delay-[200ms]">
-                <span class="text-gray-500 text-sm uppercase tracking-widest block mb-2">Services</span>
-                <a href="#aumestack" class="menu-link hover:text-cyan-400 transition-colors block mb-4">AUMESTACK</a>
-                <a href="#aumedesign" class="menu-link hover:text-blue-400 transition-colors block">AUMEDESIGN</a>
-            </li>
-            <li class="menu-link-wrapper translate-x-10 opacity-0 transition-all duration-500 delay-[250ms]">
-                <a href="#contact-section" class="menu-link hover:text-aume-blue transition-colors inline-block">Contact</a>
-            </li>
-        </ul>
-        <div class="absolute bottom-12 right-12 text-right text-sm text-gray-500 menu-link-wrapper translate-x-10 opacity-0 transition-all duration-500 delay-[300ms]">
-            <p>© 2025 AumVerse</p>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-abyss-core grid-line-top p-6 space-y-6 font-sans font-medium text-xs mt-[52px] relative z-40">
+            <button onclick="navigate('cases'); document.getElementById('mobile-menu-btn').click();" class="block text-steel-haze hover:text-neon-harvest w-full text-left">[ Cases ]</button>
+            <button onclick="navigate('home'); setTimeout(()=>document.getElementById('services').scrollIntoView(), 100); document.getElementById('mobile-menu-btn').click();" class="block text-steel-haze hover:text-polar-mist w-full text-left">Services</button>
+            <button onclick="navigate('products'); document.getElementById('mobile-menu-btn').click();" class="block text-steel-haze hover:text-neon-harvest w-full text-left">Product</button>
+            
+            <!-- Mobile Clean Button -->
+            <button onclick="document.getElementById('connect-form-wrapper').scrollIntoView({behavior: 'smooth'}); document.getElementById('mobile-menu-btn').click();" class="w-full bg-neon-harvest text-abyss-core py-3 mt-4 font-bold text-xs font-sans hover:bg-polar-mist transition-colors">
+                Book Intro Call
+            </button>
         </div>
     </nav>
 
-    <!-- Main Content Wrapper -->
-    <div id="main-content" class="relative z-10">
+    <!-- MAIN CONTENT WRAPPER -->
+    <main class="flex-grow flex flex-col pt-[52px]">
 
-        <!-- HEADER & HERO COMBINED -->
-        <header id="home" class="flex flex-col items-center pt-20 px-4 mb-24">
-            <!-- Spinning Logo -->
-            <a href="#home" class="z-0 opacity-80">
-                <!-- Increased mobile size, slowed spin -->
-                <img class="w-36 md:w-64 animate-spin-slow" src="https://i.ibb.co/YTQMWQVD/final-logo-02.png" alt="AumVerse Spiral" />
-            </a>
-            <!-- Main Brand Logo: Adjusted -mt for mobile balancing -->
-            <!-- Further reduced mb-1 to mb-0 -->
-            <a href="#home" class="z-10 mb-0 -mt-14 md:-mt-56 flex justify-center w-full">
-                <!-- Sized for mobile first, ensuring it's not too wide -->
-                <img class="w-[85%] max-w-[320px] md:max-w-none md:w-[750px] animate-float" id="scroll-spin-logo" src="https://i.ibb.co/yFYj2dHt/final-logo-04.png" alt="AumVerse Logo" />
-            </a>
+        <!-- ================= HOME PAGE ================= -->
+        <div id="page-home" class="page-section w-full flex-col flex">
             
-            <!-- HERO TEXT -->
-            <!-- Added negative top margin here to pull text block up -->
-            <div class="text-center w-full -mt-4 md:-mt-8">
-                <!-- Roller Container: Fixed height [1.3em] to match the 'We' text line-height, overflow hidden is crucial -->
-                <!-- Further reduced mb-2 to mb-1 -->
-                <h1 class="text-3xl sm:text-4xl md:text-7xl font-black mb-1 leading-tight flex flex-wrap items-center justify-center gap-2 md:gap-4">
-                    <!-- Shifted "We" further right on desktop -->
-                    <span class="md:ml-48">We</span>
-                    <span class="text-aume-blue roller-viewport min-w-[160px] md:min-w-[450px]">
-                        <ul class="roller-list" id="dynamic-text-roller">
-                            <!-- Items will be injected by JS, but one is here for structure -->
-                            <li class="roller-item">Automate</li>
-                        </ul>
-                    </span>
-                </h1>
-                <!-- Further reduced mb-2 to mb-1 -->
-                <h2 class="text-xl md:text-3xl font-bold text-gray-200 mb-1 reveal px-4">
-                    Where Innovation Meets Excellence
+            <!-- 2. Hero Section (Vanta Background) -->
+            <header id="vanta-bg" class="relative w-full min-h-[80vh] flex items-center px-6 overflow-hidden">
+                <!-- Adds a 70% dark wash over the canvas to drastically improve text readability while keeping thin lines visible -->
+                <div class="absolute inset-0 bg-abyss-core/70 pointer-events-none z-0"></div>
+                <!-- Enhanced Radial gradient overlay -->
+                <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.8)_0%,rgba(0,0,0,0.4)_50%,transparent_100%)] pointer-events-none z-0"></div>
+
+                <div class="max-w-7xl mx-auto w-full relative z-10 text-left py-20">
+                    <div class="max-w-5xl">
+                        <p class="text-steel-haze system-accent text-[10px] mb-8 drop-shadow-md">[ ./ AUMEVERSE_PROTOCOL: INITIALIZED ]</p>
+                        
+                        <!-- Typography overhaul: Elegant text shadows, background dimming handles the contrast -->
+                        <h1 class="text-5xl sm:text-7xl md:text-[6rem] font-bold tracking-tight font-display mb-8 leading-[1.05] drop-shadow-2xl [text-shadow:0_4px_16px_rgba(0,0,0,0.8)]">
+                            We design and automate <br class="hidden md:block" />
+                            <span class="text-steel-haze">operations to </span> 
+                            <span class="text-polar-mist" style="text-shadow: 0 0 30px rgba(255,255,255,0.15), 0 4px 16px rgba(0,0,0,0.8);">
+                                increase revenue.
+                            </span>
+                        </h1>
+                        
+                        <p class="text-polar-mist text-lg md:text-2xl max-w-3xl mb-12 leading-relaxed font-sans drop-shadow-lg [text-shadow:0_2px_8px_rgba(0,0,0,0.9)]">
+                            We connect the dots and integrate the intelligent systems required to scale in the new era
+                        </p>
+
+                        <div class="flex flex-col sm:flex-row gap-5 justify-start items-center relative z-20 mt-4">
+                            
+                            <!-- Custom Uiverse Btn-2 -->
+                            <button onclick="document.getElementById('connect-form-wrapper').scrollIntoView({behavior: 'smooth'})" class="custom-btn btn-2 w-full sm:w-auto">
+                                Book an Intro Call
+                            </button>
+                            
+                            <!-- Custom Uiverse Bubbles Btn -->
+                            <button onclick="navigate('cases')" class="bubbles w-full sm:w-auto">
+                                <span class="text">View Case Studies</span>
+                            </button>
+
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 3. Case Studies Preview Section -->
+            <section class="relative z-10 py-24 grid-line-top overflow-hidden">
+                <div class="max-w-7xl mx-auto px-6 mb-12 flex flex-col md:flex-row justify-between items-end gap-6">
+                    <div>
+                        <h2 class="text-5xl md:text-6xl font-bold tracking-tighter font-display mb-4">Proven Outcomes</h2>
+                        <p class="system-accent text-[10px] text-neon-harvest">[ DESIGN + AUTOMATION = REVENUE ]</p>
+                    </div>
+                    <button onclick="navigate('cases')" class="text-steel-haze hover:text-neon-harvest transition-colors font-sans flex items-center gap-2 font-medium text-sm">
+                        View Cases --
+                    </button>
+                </div>
+
+                <div class="relative w-full overflow-hidden flex">
+                    <!-- Vignette Left & Right Shadows -->
+                    <div class="absolute top-0 left-0 bottom-0 w-16 md:w-48 bg-gradient-to-r from-abyss-core to-transparent z-10 pointer-events-none"></div>
+                    <div class="absolute top-0 right-0 bottom-0 w-16 md:w-48 bg-gradient-to-l from-abyss-core to-transparent z-10 pointer-events-none"></div>
+                    
+                    <div class="flex w-max animate-marquee-right pause-on-hover px-6" id="cases-marquee">
+                        <!-- JS populated -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. Services Section -->
+            <section id="services" class="relative z-10 py-24 px-6 max-w-7xl mx-auto w-full grid-line-top">
+                <p class="text-steel-haze system-accent text-[10px] mb-4">[ ./ ARCHITECTURE_SERVICES ]</p>
+                
+                <div class="relative inline-block mb-16">
+                    <h2 class="text-5xl md:text-7xl font-bold tracking-tighter font-display pb-4">Core Infrastructure</h2>
+                    <!-- Fixed Track Underline (Thin) -->
+                    <div class="absolute bottom-0 left-0 w-full h-[1px] bg-steel-haze/20"></div>
+                    <!-- Bouncing Green Highlight Line (Thin) -->
+                    <div class="absolute bottom-0 left-0 w-[40%] h-[1px] bg-neon-harvest shadow-[0_0_8px_var(--neon-harvest)] animate-bounce-x"></div>
+                </div>
+                
+                <div class="flex flex-col">
+                    
+                    <!-- Service Pillar 1 -->
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-8 grid-line-bottom py-12 px-4 md:px-0 first:border-t-0">
+                        <div class="md:col-span-4 flex items-start">
+                            <h3 class="text-3xl font-bold tracking-tight text-reveal leading-tight font-display">Intelligent System and Revenue Automation</h3>
+                        </div>
+                        <div class="md:col-span-8 border-l border-steel-haze/20 pl-8 md:pl-12 flex flex-col justify-start pt-2">
+                            <ul class="space-y-2 text-steel-haze text-sm font-sans mb-8 list-none">
+                                <li><span class="text-neon-harvest font-bold mr-2">::</span>Custom AI agentic automations</li>
+                                <li><span class="text-neon-harvest font-bold mr-2">::</span>Autonomous voice communication systems</li>
+                                <li><span class="text-neon-harvest font-bold mr-2">::</span>Intelligent infrastructure for accelerated growth</li>
+                            </ul>
+                            <button onclick="openService('automation')" class="text-neon-harvest font-sans font-bold text-sm opacity-80 hover:opacity-100 transition-opacity hover:underline underline-offset-4 self-start">
+                                // Know more
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Service Pillar 2 -->
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-8 grid-line-bottom py-12 px-4 md:px-0">
+                        <div class="md:col-span-4 flex items-start">
+                            <h3 class="text-3xl font-bold tracking-tight text-reveal leading-tight font-display">Synthetic Media and Automated Content Operations</h3>
+                        </div>
+                        <div class="md:col-span-8 border-l border-steel-haze/20 pl-8 md:pl-12 flex flex-col justify-start pt-2">
+                            <ul class="space-y-2 text-steel-haze text-sm font-sans mb-8 list-none">
+                                <li><span class="text-neon-harvest font-bold mr-2">::</span>Automated creator content pipelines</li>
+                                <li><span class="text-neon-harvest font-bold mr-2">::</span>Synthetic media for rapid UGC campaigns</li>
+                                <li><span class="text-neon-harvest font-bold mr-2">::</span>Zero-touch cross-platform distribution</li>
+                            </ul>
+                            <button onclick="openService('synthetic')" class="text-neon-harvest font-sans font-bold text-sm opacity-80 hover:opacity-100 transition-opacity hover:underline underline-offset-4 self-start">
+                                // Know more
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Service Pillar 3 -->
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-8 grid-line-bottom py-12 px-4 md:px-0">
+                        <div class="md:col-span-4 flex items-start">
+                            <h3 class="text-3xl font-bold tracking-tight text-reveal leading-tight font-display">Brand Identity and Creative Direction</h3>
+                        </div>
+                        <div class="md:col-span-8 border-l border-steel-haze/20 pl-8 md:pl-12 flex flex-col justify-start pt-2">
+                            <ul class="space-y-2 text-steel-haze text-sm font-sans mb-8 list-none">
+                                <li><span class="text-neon-harvest font-bold mr-2">::</span>Elite brand positioning & identity</li>
+                                <li><span class="text-neon-harvest font-bold mr-2">::</span>High-ROI brand design & visual systems</li>
+                                <li><span class="text-neon-harvest font-bold mr-2">::</span>Web development for high-ticket conversions</li>
+                            </ul>
+                            <button onclick="openService('brand')" class="text-neon-harvest font-sans font-bold text-sm opacity-80 hover:opacity-100 transition-opacity hover:underline underline-offset-4 self-start">
+                                // Know more
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. Execution Pipeline -->
+            <section id="vanta-pipeline-bg" class="relative z-10 py-24 grid-line-top overflow-hidden">
+                <div class="absolute inset-0 bg-abyss-core/80 pointer-events-none z-0"></div>
+                <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.8)_0%,rgba(0,0,0,0.5)_50%,transparent_100%)] pointer-events-none z-0"></div>
+                
+                <div class="max-w-7xl mx-auto px-6 mb-12 flex flex-col md:flex-row justify-between items-end gap-6 relative z-10">
+                    <div>
+                        <h2 class="text-4xl md:text-5xl font-bold font-display">Execution Pipeline</h2>
+                        <p class="system-accent text-[10px] text-neon-harvest mt-4">[ SYSTEM_DEPLOYMENT_PHASES ]</p>
+                    </div>
+                </div>
+                <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 relative z-10">
+                    <!-- Card 1 -->
+                    <div class="bg-void-green border border-steel-haze/20 p-5 md:p-6 flex flex-col gap-2">
+                        <span class="text-neon-harvest font-display font-bold text-lg">[ 01 ]</span>
+                        <h3 class="text-polar-mist font-display font-bold text-base uppercase tracking-wider">Discovery<br><span class="text-steel-haze text-xs tracking-normal capitalize">(Intro Call)</span></h3>
+                        <p class="text-steel-haze font-sans text-xs leading-relaxed">We map your bottlenecks and identify precise revenue opportunities we can unlock together. No guessing.</p>
+                    </div>
+                    <!-- Card 2 -->
+                    <div class="bg-void-green border border-steel-haze/20 p-5 md:p-6 flex flex-col gap-2">
+                        <span class="text-neon-harvest font-display font-bold text-lg">[ 02 ]</span>
+                        <h3 class="text-polar-mist font-display font-bold text-base uppercase tracking-wider">Architecture<br><span class="text-steel-haze text-xs tracking-normal capitalize">(System Initialization)</span></h3>
+                        <p class="text-steel-haze font-sans text-xs leading-relaxed">We connect the dots. Our specialists design intelligent, high-leverage operational blueprints tailored to your venture.</p>
+                    </div>
+                    <!-- Card 3 -->
+                    <div class="bg-void-green border border-steel-haze/20 p-5 md:p-6 flex flex-col gap-2">
+                        <span class="text-neon-harvest font-display font-bold text-lg">[ 03 ]</span>
+                        <h3 class="text-polar-mist font-display font-bold text-base uppercase tracking-wider">Integration<br><span class="text-steel-haze text-xs tracking-normal capitalize">(Build)</span></h3>
+                        <p class="text-steel-haze font-sans text-xs leading-relaxed">Rapid deployment of custom AI agents and automation pipelines. We build systems that actually scale.</p>
+                    </div>
+                    <!-- Card 4 -->
+                    <div class="bg-void-green border border-steel-haze/20 p-5 md:p-6 flex flex-col gap-2">
+                        <span class="text-neon-harvest font-display font-bold text-lg">[ 04 ]</span>
+                        <h3 class="text-polar-mist font-display font-bold text-base uppercase tracking-wider">Autonomy<br><span class="text-steel-haze text-xs tracking-normal capitalize">(Launch)</span></h3>
+                        <p class="text-steel-haze font-sans text-xs leading-relaxed">Systems go live. Watch your manual hours drop to zero while revenue scales autonomously.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6. Testimonials Marquee (COMPACT SIZE) -->
+            <section class="relative z-10 py-24 overflow-hidden grid-line-top">
+                <div class="max-w-7xl mx-auto px-6 mb-12 text-center">
+                    <p class="text-steel-haze system-accent text-[10px] mb-4">[ ./ CLIENT_DATA_LOGS ]</p>
+                    <h2 class="text-5xl md:text-6xl font-bold tracking-tighter font-display">System Feedback</h2>
+                </div>
+                
+                <div class="relative w-full flex flex-col gap-6">
+                    <!-- Vignettes -->
+                    <div class="absolute top-0 left-0 bottom-0 w-16 md:w-48 bg-gradient-to-r from-abyss-core to-transparent z-10 pointer-events-none"></div>
+                    <div class="absolute top-0 right-0 bottom-0 w-16 md:w-48 bg-gradient-to-l from-abyss-core to-transparent z-10 pointer-events-none"></div>
+                    
+                    <div class="flex w-max animate-marquee-left pause-on-hover px-6" id="test-row1"></div>
+                    <div class="flex w-max animate-marquee-right pause-on-hover px-6" id="test-row2"></div>
+                </div>
+            </section>
+
+            <!-- 7. Final Conversion Section & Multi-Step Lead Capture Form -->
+            <section class="relative z-10 pt-24 pb-16 px-6 max-w-7xl mx-auto w-full text-center grid-line-top">
+                <h2 class="text-3xl md:text-5xl font-bold mb-8 tracking-tight font-display">
+                    Design the system.<br class="md:hidden" />
+                    <span class="text-steel-haze"> Automate the revenue.</span>
                 </h2>
-                <p class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto reveal px-4">
-                    We don't just build businesses. We architect futures.
-                </p>
-            </div>
+                
+                <!-- Multi-Step Form Wrapper (Compacted) -->
+                <div id="connect-form-wrapper" class="max-w-2xl mx-auto w-full text-left mt-8 bg-void-green grid-line-all p-6 md:p-8 relative">
+                    <div class="absolute top-2 left-2 crosshair opacity-50"></div>
+                    <div class="absolute bottom-2 right-2 crosshair opacity-50"></div>
+                    
+                    <form id="connect-form" action="https://api.web3forms.com/submit" method="POST" class="w-full relative z-10">
+                        <input type="hidden" name="access_key" value="af641b1b-a439-494f-a8b7-6e11bfe35909">
+                        <!-- Step 1: Lead Capture -->
+                        <div id="step-1" class="space-y-6">
+                            <div class="border-b border-steel-haze/20 pb-4 mb-8">
+                                <h3 class="text-2xl font-display font-bold text-polar-mist">Step 01: Connect</h3>
+                                <p class="text-steel-haze system-accent text-[10px] mt-1">[ INITIALIZE_DATA_TRANSFER ]</p>
+                            </div>
 
-            <!-- SCROLL INDICATOR -->
-            <a href="#about" class="flex flex-col items-center mt-20 animate-bounce opacity-50 hover:opacity-100 transition-opacity duration-300 cursor-pointer z-10">
-                <span class="text-xs uppercase tracking-[0.3em] mb-4 text-gray-400">Scroll to explore</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-aume-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                </svg>
-            </a>
-        </header>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="flex flex-col gap-2">
+                                    <label class="text-polar-mist text-xs font-bold tracking-widest uppercase">Full Name</label>
+                                    <input type="text" name="fullName" required class="bg-abyss-core grid-line-all px-3 py-2.5 text-polar-mist focus:outline-none focus:border-neon-harvest transition-colors font-sans text-xs">
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <label class="text-polar-mist text-xs font-bold tracking-widest uppercase">Email Address</label>
+                                    <input type="email" name="email" id="email-input-1" required class="bg-abyss-core grid-line-all px-3 py-2.5 text-polar-mist focus:outline-none focus:border-neon-harvest transition-colors font-sans text-xs">
+                                </div>
+                            </div>
 
-        <!-- SERVICES INTRO -->
-        <div id="services" class="text-center mb-16 reveal">
-            <h2 class="text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500 inline-block">
-                Explore Our Powerhouses
-            </h2>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="flex flex-col gap-2">
+                                    <label class="text-polar-mist text-xs font-bold tracking-widest uppercase">Country</label>
+                                    <select id="country-select" name="country" required class="bg-abyss-core grid-line-all px-3 py-2.5 text-polar-mist focus:outline-none focus:border-neon-harvest transition-colors font-sans text-xs appearance-none">
+                                        <option value="">Select Country</option>
+                                    </select>
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <label class="text-polar-mist text-xs font-bold tracking-widest uppercase">State/Region</label>
+                                    <select id="state-select" name="state" required class="bg-abyss-core grid-line-all px-3 py-2.5 text-polar-mist focus:outline-none focus:border-neon-harvest transition-colors font-sans text-xs appearance-none">
+                                        <option value="">Select State</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-col gap-2">
+                                <label class="text-polar-mist text-xs font-bold tracking-widest uppercase">Contact Number (WhatsApp)</label>
+                                <input type="tel" id="phone-input" name="phone" required class="bg-abyss-core grid-line-all px-3 py-2.5 text-polar-mist focus:outline-none focus:border-neon-harvest transition-colors font-sans text-xs">
+                            </div>
+
+                            <div class="pt-6 flex justify-start">
+                                <button type="button" id="btn-next" class="bg-neon-harvest text-abyss-core px-8 py-3 font-bold tracking-widest text-xs hover:bg-polar-mist transition-colors mt-2 shadow-[0_0_15px_rgba(93,214,44,0.2)]">
+                                    [ PROCEED TO STEP 02 ]
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Verification & Scheduling -->
+                        <div id="step-2" class="space-y-6 hidden">
+                            <div class="border-b border-steel-haze/20 pb-4 mb-8 flex justify-between items-end">
+                                <div>
+                                    <h3 class="text-2xl font-display font-bold text-polar-mist">Step 02: Schedule</h3>
+                                    <p class="text-steel-haze system-accent text-[10px] mt-1">[ SELECT_TIME_SLOT ]</p>
+                                </div>
+                                <button type="button" id="btn-back" class="text-steel-haze hover:text-neon-harvest text-xs font-bold uppercase transition-colors">
+                                    <i data-lucide="arrow-left" class="w-3 h-3 inline-block mr-1"></i> Back
+                                </button>
+                            </div>
+
+                            <div class="flex flex-col gap-2 bg-abyss-core p-5 grid-line-all mb-4">
+                                <label class="text-steel-haze text-[10px] system-accent uppercase">Verified Email</label>
+                                <div class="flex items-center gap-4">
+                                    <input type="email" id="email-readonly" readonly class="bg-transparent text-polar-mist w-full focus:outline-none font-sans text-base border-b border-steel-haze/20 pb-1">
+                                    <label class="flex items-center gap-2 cursor-pointer whitespace-nowrap text-neon-harvest text-xs font-bold uppercase">
+                                        <input type="checkbox" required class="accent-neon-harvest w-4 h-4"> Confirm
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="flex flex-col gap-2">
+                                    <label class="text-polar-mist text-xs font-bold tracking-widest uppercase">Date Selection</label>
+                                    <input type="date" name="date" required class="bg-abyss-core grid-line-all px-3 py-2.5 text-polar-mist focus:outline-none focus:border-neon-harvest transition-colors font-sans text-xs">
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <label class="text-polar-mist text-xs font-bold tracking-widest uppercase">Time Slot</label>
+                                    <div class="grid grid-cols-3 gap-2">
+                                        <label class="time-pill relative cursor-pointer">
+                                            <input type="radio" name="time" value="10:00 AM" required class="peer sr-only">
+                                            <div class="text-center px-3 py-2.5 bg-abyss-core grid-line-all text-steel-haze peer-checked:bg-neon-harvest peer-checked:text-abyss-core peer-checked:border-neon-harvest transition-all text-xs font-bold whitespace-nowrap">
+                                                [ 10:00 AM ]
+                                            </div>
+                                        </label>
+                                        <label class="time-pill relative cursor-pointer">
+                                            <input type="radio" name="time" value="01:00 PM" required class="peer sr-only">
+                                            <div class="text-center px-3 py-2.5 bg-abyss-core grid-line-all text-steel-haze peer-checked:bg-neon-harvest peer-checked:text-abyss-core peer-checked:border-neon-harvest transition-all text-xs font-bold whitespace-nowrap">
+                                                [ 01:00 PM ]
+                                            </div>
+                                        </label>
+                                        <label class="time-pill relative cursor-pointer">
+                                            <input type="radio" name="time" value="04:00 PM" required class="peer sr-only">
+                                            <div class="text-center px-3 py-2.5 bg-abyss-core grid-line-all text-steel-haze peer-checked:bg-neon-harvest peer-checked:text-abyss-core peer-checked:border-neon-harvest transition-all text-xs font-bold whitespace-nowrap">
+                                                [ 04:00 PM ]
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="pt-6 flex justify-start">
+                                <button type="submit" id="btn-submit" class="bg-neon-harvest text-abyss-core px-8 py-3 font-bold tracking-widest text-xs hover:bg-polar-mist transition-colors mt-2 shadow-[0_0_15px_rgba(93,214,44,0.2)]">
+                                    [ BOOK & SUBMIT ]
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Success Message -->
+                    <div id="form-success" class="hidden text-center py-12 relative z-10">
+                        <div class="w-16 h-16 bg-void-green flex items-center justify-center mx-auto mb-6 grid-line-all text-neon-harvest shadow-[0_0_15px_rgba(93,214,44,0.1)]">
+                            <i data-lucide="check" class="w-8 h-8"></i>
+                        </div>
+                        <h3 class="text-3xl font-display font-bold text-polar-mist mb-2">Transmission Received</h3>
+                        <p class="text-steel-haze font-sans">Your meeting request is logged. We will contact you shortly.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 7.5 FAQ Accordion Section -->
+            <section class="relative z-10 py-24 overflow-hidden grid-line-top">
+                <div class="max-w-7xl mx-auto px-6 mb-12">
+                    <p class="text-steel-haze system-accent text-[10px] mb-4">[ ./ KNOWLEDGE_BASE ]</p>
+                    <h2 class="text-4xl md:text-5xl font-bold font-display">System Inquiries</h2>
+                </div>
+                <div class="max-w-4xl mx-auto px-6 w-full">
+                    
+                    <!-- Group 1 -->
+                    <div class="mb-8">
+                        <p class="text-[10px] text-neon-harvest system-accent mb-4">[ GENERAL & OPERATIONS ]</p>
+                        
+                        <!-- Accordion Item 1 -->
+                        <div class="bg-void-green grid-line-top grid-line-all mb-2">
+                            <button class="faq-btn w-full text-left py-4 px-6 flex justify-between items-center focus:outline-none group">
+                                <span class="text-polar-mist font-display text-base font-bold group-hover:text-neon-harvest transition-colors pr-8">How long does it take to deploy a custom infrastructure?</span>
+                                <i data-lucide="arrow-right" class="faq-icon text-neon-harvest transform transition-transform duration-300 flex-shrink-0 w-4 h-4"></i>
+                            </button>
+                            <div class="faq-content hidden px-6 pb-5">
+                                <p class="text-steel-haze font-sans text-sm leading-relaxed">It depends on the complexity of your bottlenecks. A standard automated content pipeline can be deployed in 2 weeks. Full enterprise-grade AI agent routing and custom web apps typically take 4 to 6 weeks from discovery to launch.</p>
+                            </div>
+                        </div>
+
+                        <!-- Accordion Item 2 -->
+                        <div class="bg-void-green grid-line-top grid-line-all mb-2">
+                            <button class="faq-btn w-full text-left py-4 px-6 flex justify-between items-center focus:outline-none group">
+                                <span class="text-polar-mist font-display text-base font-bold group-hover:text-neon-harvest transition-colors pr-8">What happens after the systems go live? Do you provide support?</span>
+                                <i data-lucide="arrow-right" class="faq-icon text-neon-harvest transform transition-transform duration-300 flex-shrink-0 w-4 h-4"></i>
+                            </button>
+                            <div class="faq-content hidden px-6 pb-5">
+                                <p class="text-steel-haze font-sans text-sm leading-relaxed">We don't just hand over the keys and walk away. We offer ongoing maintenance retainers to monitor API health, optimize agent performance, and ensure absolute zero downtime as your volume scales.</p>
+                            </div>
+                        </div>
+
+                        <!-- Accordion Item 3 -->
+                        <div class="bg-void-green grid-line-top grid-line-all mb-2">
+                            <button class="faq-btn w-full text-left py-4 px-6 flex justify-between items-center focus:outline-none group">
+                                <span class="text-polar-mist font-display text-base font-bold group-hover:text-neon-harvest transition-colors pr-8">What happens immediately after I book an intro call?</span>
+                                <i data-lucide="arrow-right" class="faq-icon text-neon-harvest transform transition-transform duration-300 flex-shrink-0 w-4 h-4"></i>
+                            </button>
+                            <div class="faq-content hidden px-6 pb-5">
+                                <p class="text-steel-haze font-sans text-sm leading-relaxed">We jump on a 30-minute discovery node. We won't pitch you generic services. We will map your current operational leaks, identify exact revenue opportunities, and determine if our architecture is a fit for your scale.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Group 2 -->
+                    <div class="mb-8">
+                        <p class="text-[10px] text-neon-harvest system-accent mb-4">[ INTELLIGENT SYSTEMS & AI ]</p>
+                        
+                        <!-- Accordion Item 4 -->
+                        <div class="bg-void-green grid-line-top grid-line-all mb-2">
+                            <button class="faq-btn w-full text-left py-4 px-6 flex justify-between items-center focus:outline-none group">
+                                <span class="text-polar-mist font-display text-base font-bold group-hover:text-neon-harvest transition-colors pr-8">Do the autonomous AI voice agents actually sound human?</span>
+                                <i data-lucide="arrow-right" class="faq-icon text-neon-harvest transform transition-transform duration-300 flex-shrink-0 w-4 h-4"></i>
+                            </button>
+                            <div class="faq-content hidden px-6 pb-5">
+                                <p class="text-steel-haze font-sans text-sm leading-relaxed">Yes. We engineer our voice systems with sub-500ms latency. They understand context, handle interruptions gracefully, and operate with the tone of a top-tier sales or support rep.</p>
+                            </div>
+                        </div>
+
+                        <!-- Accordion Item 5 -->
+                        <div class="bg-void-green grid-line-top grid-line-all mb-2">
+                            <button class="faq-btn w-full text-left py-4 px-6 flex justify-between items-center focus:outline-none group">
+                                <span class="text-polar-mist font-display text-base font-bold group-hover:text-neon-harvest transition-colors pr-8">Is our internal company data secure with your custom AI agents?</span>
+                                <i data-lucide="arrow-right" class="faq-icon text-neon-harvest transform transition-transform duration-300 flex-shrink-0 w-4 h-4"></i>
+                            </button>
+                            <div class="faq-content hidden px-6 pb-5">
+                                <p class="text-steel-haze font-sans text-sm leading-relaxed">Absolute data sovereignty is our baseline. We build closed-loop retrieval (RAG) systems. Your proprietary data is siloed, encrypted, and is never used to train public LLM models.</p>
+                            </div>
+                        </div>
+
+                        <!-- Accordion Item 6 -->
+                        <div class="bg-void-green grid-line-top grid-line-all mb-2">
+                            <button class="faq-btn w-full text-left py-4 px-6 flex justify-between items-center focus:outline-none group">
+                                <span class="text-polar-mist font-display text-base font-bold group-hover:text-neon-harvest transition-colors pr-8">What tech stack do you use to build these automations?</span>
+                                <i data-lucide="arrow-right" class="faq-icon text-neon-harvest transform transition-transform duration-300 flex-shrink-0 w-4 h-4"></i>
+                            </button>
+                            <div class="faq-content hidden px-6 pb-5">
+                                <p class="text-steel-haze font-sans text-sm leading-relaxed">We deploy the most robust, scalable tools available, primarily leveraging n8n, Make.com, OpenAI/Gemini APIs, and custom Python/Node environments. We remain stack-agnostic to build what serves your specific architecture best.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Group 3 -->
+                    <div class="mb-8">
+                        <p class="text-[10px] text-neon-harvest system-accent mb-4">[ SYNTHETIC MEDIA ]</p>
+                        
+                        <!-- Accordion Item 7 -->
+                        <div class="bg-void-green grid-line-top grid-line-all mb-2">
+                            <button class="faq-btn w-full text-left py-4 px-6 flex justify-between items-center focus:outline-none group">
+                                <span class="text-polar-mist font-display text-base font-bold group-hover:text-neon-harvest transition-colors pr-8">Will the automated content pipeline sound like a robot wrote it?</span>
+                                <i data-lucide="arrow-right" class="faq-icon text-neon-harvest transform transition-transform duration-300 flex-shrink-0 w-4 h-4"></i>
+                            </button>
+                            <div class="faq-content hidden px-6 pb-5">
+                                <p class="text-steel-haze font-sans text-sm leading-relaxed">Not a chance. We fine-tune our algorithmic systems on your exact brand voice, past high-performing content, and specific industry nuances. It scales your authentic voice, not a generic one.</p>
+                            </div>
+                        </div>
+
+                        <!-- Accordion Item 8 -->
+                        <div class="bg-void-green grid-line-top grid-line-all mb-2">
+                            <button class="faq-btn w-full text-left py-4 px-6 flex justify-between items-center focus:outline-none group">
+                                <span class="text-polar-mist font-display text-base font-bold group-hover:text-neon-harvest transition-colors pr-8">Do I still need to edit videos if I use your synthetic media systems?</span>
+                                <i data-lucide="arrow-right" class="faq-icon text-neon-harvest transform transition-transform duration-300 flex-shrink-0 w-4 h-4"></i>
+                            </button>
+                            <div class="faq-content hidden px-6 pb-5">
+                                <p class="text-steel-haze font-sans text-sm leading-relaxed">No. The goal is zero manual intervention. You provide the raw input or parameters, and our pipeline handles the clipping, pacing, captioning, and cross-platform scheduling autonomously.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Group 4 -->
+                    <div class="mb-8">
+                        <p class="text-[10px] text-neon-harvest system-accent mb-4">[ BRAND IDENTITY & DESIGN ]</p>
+                        
+                        <!-- Accordion Item 9 -->
+                        <div class="bg-void-green grid-line-top grid-line-all mb-2">
+                            <button class="faq-btn w-full text-left py-4 px-6 flex justify-between items-center focus:outline-none group">
+                                <span class="text-polar-mist font-display text-base font-bold group-hover:text-neon-harvest transition-colors pr-8">We already have a logo. Do we need a full creative overhaul?</span>
+                                <i data-lucide="arrow-right" class="faq-icon text-neon-harvest transform transition-transform duration-300 flex-shrink-0 w-4 h-4"></i>
+                            </button>
+                            <div class="faq-content hidden px-6 pb-5">
+                                <p class="text-steel-haze font-sans text-sm leading-relaxed">If your current visuals aren't converting or justifying premium pricing, yes. We don't just make things look "nice." We engineer elite visual architectures and high-performance digital environments built purely for ROI.</p>
+                            </div>
+                        </div>
+
+                        <!-- Accordion Item 10 -->
+                        <div class="bg-void-green grid-line-top grid-line-all mb-2">
+                            <button class="faq-btn w-full text-left py-4 px-6 flex justify-between items-center focus:outline-none group">
+                                <span class="text-polar-mist font-display text-base font-bold group-hover:text-neon-harvest transition-colors pr-8">Can your web development team integrate with our existing Shopify or custom backend?</span>
+                                <i data-lucide="arrow-right" class="faq-icon text-neon-harvest transform transition-transform duration-300 flex-shrink-0 w-4 h-4"></i>
+                            </button>
+                            <div class="faq-content hidden px-6 pb-5">
+                                <p class="text-steel-haze font-sans text-sm leading-relaxed">Seamlessly. We specialize in high-converting frontend UI that communicates via custom API bridges directly to your existing fulfillment and inventory backends.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
         </div>
 
-        <!-- AUMESTACK SECTION (First) -->
-        <section id="aumestack" class="container mx-auto px-4 mb-32">
-            <!-- Removed tilt-card class -->
-            <div class="glass-card glass-card-hover rounded-3xl overflow-hidden transition-all duration-500 reveal">
-                <!-- Distinctive header for Stack -->
-                <div class="bg-gradient-to-r from-aume-blue/50 to-cyan-900/50 p-10 md:p-16 text-center md:text-left">
-                     <div class="flex flex-col md:flex-row justify-between items-center gap-8">
-                        <div>
-                            <h3 class="text-4xl md:text-6xl font-black mb-4">AUMESTACK</h3>
-                            <p class="text-xl md:text-2xl font-medium text-cyan-200">Engineering Growth, Architecting Success</p>
-                        </div>
-                         <!-- Changed button text -->
-                         <a href="https://aumestack.netlify.app/" target="_blank" class="bg-white text-aume-dark px-8 py-4 rounded-full font-black hover:scale-105 transition-transform flex items-center gap-2">
-                            VISIT <span>→</span>
-                        </a>
-                    </div>
-                </div>
-                <div class="p-10 md:p-16">
-                     <p class="text-2xl font-bold mb-8 max-w-3xl leading-relaxed">
-                        "In business, there are two types of companies: those that react, and those that dominate. AUMESTACK builds the latter."
-                    </p>
-                    <p class="text-gray-300 text-lg mb-12 max-w-4xl">
-                        We're growth partners who architect your success from the ground up. Using cutting-edge automation, AI-driven insights, and battle-tested strategies, we turn ambitious startups into category leaders and plateaued businesses into profit machines.
-                    </p>
+        <!-- ================= CASES PAGE ================= -->
+        <div id="page-cases" class="page-section hidden px-6 py-20 max-w-7xl mx-auto w-full flex-grow relative">
+            <div class="absolute top-10 left-0 crosshair"></div>
+            <div class="absolute top-10 right-0 crosshair"></div>
+            <p class="text-steel-haze system-accent text-[10px] mb-4">[ ./ SYSTEM_DATA: PROVEN_CASES ]</p>
+            <h1 class="text-5xl md:text-7xl font-bold font-display tracking-tight mb-16 text-polar-mist">Case Studies</h1>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="cases-grid"></div>
+        </div>
 
-                    <!-- Services Grid with Professional SVGs - REORDERED -->
-                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                        <!-- 1. AI Integration (Moved from 2) -->
-                        <div class="glass-card p-6 rounded-2xl hover:border-cyan-500/50 transition-colors">
-                             <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-cyan-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
-                            </svg>
-                            <h4 class="font-bold text-lg mb-2">AI Integration</h4>
-                            <p class="text-sm text-gray-400">Future-proof your business. Automate & optimize everything.</p>
-                        </div>
-                        <!-- 2. AI Business Consulting (Moved from 4) -->
-                         <div class="glass-card p-6 rounded-2xl hover:border-cyan-500/50 transition-colors">
-                             <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-cyan-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                            </svg>
-                            <h4 class="font-bold text-lg mb-2">AI Business Consulting</h4>
-                            <p class="text-sm text-gray-400">Future-proof your operations. Strategic AI implementation for exponential advantage.</p>
-                        </div>
-                        <!-- 3. Business Funnel (Moved from 1, renamed) -->
-                        <div class="glass-card p-6 rounded-2xl hover:border-cyan-500/50 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-cyan-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                            <h4 class="font-bold text-lg mb-2">Business Funnel</h4>
-                            <p class="text-sm text-gray-400">Turn weeks of work into minutes. Scale without chaos.</p>
-                        </div>
-                        <!-- 4. Launch System (Moved from 3, renamed) -->
-                        <div class="glass-card p-6 rounded-2xl hover:border-cyan-500/50 transition-colors">
-                             <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-cyan-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                            </svg>
-                            <h4 class="font-bold text-lg mb-2">Launch System</h4>
-                            <p class="text-sm text-gray-400">From zero to one. Data-driven roadmaps for a flawless market entry.</p>
-                        </div>
+        <!-- ================= PRODUCTS PAGE ================= -->
+        <div id="page-products" class="page-section hidden px-6 py-20 max-w-7xl mx-auto w-full flex-grow relative">
+            <div class="absolute top-10 left-0 crosshair"></div>
+            <p class="text-steel-haze system-accent text-[10px] mb-4">[ ./ SYSTEM_DATA: PRODUCT_SOLUTIONS ]</p>
+            <h1 class="text-5xl md:text-7xl font-bold tracking-tight font-display mb-16">Products & Solutions</h1>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
+                <!-- Product 1 -->
+                <div class="group bg-abyss-core grid-line-all p-10 transition-colors flex flex-col relative opacity-60 hover:opacity-100">
+                    <div class="absolute bottom-4 right-4 crosshair opacity-30"></div>
+                    <div class="flex justify-between items-start mb-6">
+                        <h3 class="text-3xl font-bold font-display text-steel-haze group-hover:text-polar-mist transition-colors">Aumedai</h3>
+                        <span class="text-[10px] system-accent text-steel-haze grid-line-all px-3 py-1 group-hover:text-neon-harvest group-hover:border-neon-harvest transition-colors">[ IN_DEV ]</span>
                     </div>
-                    
-                    <!-- Added line -->
-                    <p class="text-center text-gray-400 text-md mt-8">
-                        Visit the Aumestack page for more information on our growth services.
+                    <h4 class="text-steel-haze mb-4 font-medium font-sans text-lg group-hover:text-polar-mist transition-colors">Clinical Context Engine</h4>
+                    <p class="text-steel-haze text-sm font-sans leading-relaxed mb-8 flex-1">Advanced AI infrastructure designed to process, contextualize, and streamline clinical data pipelines for modern healthcare environments.</p>
+                    <p class="text-steel-haze system-accent text-[10px] font-bold animate-pulse text-left group-hover:text-neon-harvest transition-colors">
+                        [ COMING_SOON ]
+                    </p>
+                </div>
+                <!-- Product 2 -->
+                <div class="group bg-abyss-core grid-line-all p-10 transition-colors flex flex-col relative opacity-60 hover:opacity-100">
+                    <div class="absolute bottom-4 right-4 crosshair opacity-30"></div>
+                    <div class="flex justify-between items-start mb-6">
+                        <h3 class="text-3xl font-bold font-display text-steel-haze group-hover:text-polar-mist transition-colors">OpsSystem</h3>
+                        <span class="text-[10px] system-accent text-steel-haze grid-line-all px-3 py-1 group-hover:text-neon-harvest group-hover:border-neon-harvest transition-colors">[ IN_DEV ]</span>
+                    </div>
+                    <h4 class="text-steel-haze mb-4 font-medium font-sans text-lg group-hover:text-polar-mist transition-colors">OS for Founders & Agencies</h4>
+                    <p class="text-steel-haze text-sm font-sans leading-relaxed mb-8 flex-1">The ultimate command center. Unify your workflows, client management, and revenue tracking in one streamlined, automated interface.</p>
+                    <p class="text-steel-haze system-accent text-[10px] font-bold animate-pulse text-left group-hover:text-neon-harvest transition-colors">
+                        [ COMING_SOON ]
+                    </p>
+                </div>
+                <!-- Product 3 -->
+                <div class="group bg-abyss-core grid-line-all p-10 transition-colors flex flex-col relative opacity-60 hover:opacity-100">
+                    <div class="absolute bottom-4 right-4 crosshair opacity-30"></div>
+                    <div class="flex justify-between items-start mb-6">
+                        <h3 class="text-3xl font-bold font-display text-steel-haze group-hover:text-polar-mist transition-colors">AumeOs</h3>
+                        <span class="text-[10px] system-accent text-steel-haze grid-line-all px-3 py-1 group-hover:text-neon-harvest group-hover:border-neon-harvest transition-colors">[ IN_DEV ]</span>
+                    </div>
+                    <h4 class="text-steel-haze mb-4 font-medium font-sans text-lg group-hover:text-polar-mist transition-colors">Personalized PM Mentor</h4>
+                    <p class="text-steel-haze text-sm font-sans leading-relaxed mb-8 flex-1">An AI-driven product management mentor trained on top-tier frameworks to guide your product strategy and execution.</p>
+                    <p class="text-steel-haze system-accent text-[10px] font-bold animate-pulse text-left group-hover:text-neon-harvest transition-colors">
+                        [ COMING_SOON ]
                     </p>
                 </div>
             </div>
-        </section>
+        </div>
 
-        <!-- AUMEDESIGN SECTION (Second) -->
-        <section id="aumedesign" class="container mx-auto px-4 mb-32">
-            <!-- Removed tilt-card class -->
-            <div class="glass-card glass-card-hover rounded-3xl overflow-hidden transition-all duration-500 reveal">
-                <!-- Distinctive header for Design -->
-                <div class="bg-gradient-to-r from-blue-950/50 to-aume-blue/50 p-10 md:p-16 text-center md:text-left">
-                    <div class="flex flex-col md:flex-row justify-between items-center gap-8">
-                        <div>
-                            <h3 class="text-4xl md:text-6xl font-black mb-4">AUMEDESIGN</h3>
-                            <p class="text-xl md:text-2xl font-medium text-blue-100">Where Brands Become Legends</p>
-                        </div>
-                        <a href="https://aumedesign.netlify.app/" target="_blank" class="bg-white text-aume-dark px-8 py-4 rounded-full font-black hover:scale-105 transition-transform flex items-center gap-2">
-                            VISIT STUDIO <span>→</span>
-                        </a>
-                    </div>
-                </div>
-                <div class="p-10 md:p-16">
-                     <p class="text-2xl font-bold mb-8 max-w-3xl leading-relaxed">
-                        "Your brand is not a logo. It's an experience. A feeling. A promise."
-                    </p>
-                    <p class="text-gray-300 text-lg mb-12 max-w-4xl">
-                        At AUMEDESIGN, we don't create designs—we craft brand universes. Every pixel, every color, every curve is engineered to captivate, convert, and conquer. We build visual experiences that don't just look premium—they ARE premium.
-                    </p>
+        <!-- ================= CASE DETAIL PAGE ================= -->
+        <div id="page-case-detail" class="page-section hidden px-6 py-20 max-w-7xl mx-auto w-full flex-grow relative">
+            <div class="absolute top-10 left-0 crosshair"></div>
+            <button onclick="navigate('cases')" class="text-steel-haze hover:text-neon-harvest font-sans text-xs font-bold mb-8 flex items-center gap-2 transition-colors">
+                <i data-lucide="chevron-left" class="w-3 h-3"></i> RETURN TO CASES
+            </button>
+            <div id="case-detail-content"></div>
+        </div>
 
-                    <!-- Services Grid with Professional SVGs -->
-                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                        <div class="glass-card p-6 rounded-2xl hover:border-aume-blue/50 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-                            </svg>
-                            <h4 class="font-bold text-lg mb-2">Brand Identity</h4>
-                            <p class="text-sm text-gray-400">Logos that become legacies. Visual systems that define eras.</p>
-                        </div>
-                        <div class="glass-card p-6 rounded-2xl hover:border-aume-blue/50 transition-colors">
-                             <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                            </svg>
-                            <h4 class="font-bold text-lg mb-2">Web Design & Dev</h4>
-                            <p class="text-sm text-gray-400">Websites so stunning, your competitors will hire us next.</p>
-                        </div>
-                        <div class="glass-card p-6 rounded-2xl hover:border-aume-blue/50 transition-colors">
-                             <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                            </svg>
-                            <h4 class="font-bold text-lg mb-2">Packaging</h4>
-                            <p class="text-sm text-gray-400">Transform shelves into showrooms. Make products impossible to ignore.</p>
-                        </div>
-                         <!-- Renamed to Creative Brand Strategy -->
-                         <div class="glass-card p-6 rounded-2xl hover:border-aume-blue/50 transition-colors">
-                             <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <h4 class="font-bold text-lg mb-2">Creative Brand Strategy</h4>
-                            <p class="text-sm text-gray-400">Position your brand where it belongs—at the very top.</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Added line -->
-                    <p class="text-center text-gray-400 text-md mt-8">
-                        Visit the Aumedesign studio to see our full portfolio.
-                    </p>
-                </div>
+        <!-- ================= SERVICE DETAIL PAGE ================= -->
+        <div id="page-service-detail" class="page-section hidden px-6 py-20 max-w-7xl mx-auto w-full flex-grow relative">
+            <div class="absolute top-10 left-0 crosshair"></div>
+            <button onclick="navigate('home'); setTimeout(()=>document.getElementById('services').scrollIntoView(), 100);" class="text-steel-haze hover:text-neon-harvest font-sans text-xs font-bold mb-8 flex items-center gap-2 transition-colors">
+                <i data-lucide="chevron-left" class="w-3 h-3"></i> RETURN TO ARCHITECTURE
+            </button>
+            <div id="service-detail-content"></div>
+        </div>
+
+        <!-- Trusted Partner Badge (Scaled Up, Non-Clickable Link) -->
+        <div class="mt-8 mb-16 flex justify-center items-center opacity-50 hover:opacity-100 transition-opacity duration-500 relative z-20">
+            <div class="inline-block p-4">
+                <!-- Grayscale filter makes it blend cleanly into the dark theme, revealing color on hover -->
+                <img src="https://i.ibb.co/C354PxD3/jjj.png" alt="Partner Badge" class="h-32 md:h-44 w-auto object-contain filter grayscale contrast-125 hover:grayscale-0 transition-all duration-500">
             </div>
-        </section>
+        </div>
 
-        <!-- ABOUT / BRAND PHILOSOPHY (MOVED HERE) -->
-        <section id="about" class="container mx-auto px-4 mb-32 reveal">
-            <div class="glass-card rounded-3xl p-8 md:p-16 max-w-4xl mx-auto text-center md:text-left flex flex-col md:flex-row items-center gap-12">
-                <div class="md:w-1/2">
-                    <h2 class="text-4xl font-black mb-6">The AumVerse Ecosystem</h2>
-                    <div class="h-1 w-20 bg-aume-blue mb-6 mx-auto md:mx-0"></div>
-                    <p class="text-lg text-gray-300 leading-relaxed mb-6">
-                        In a world of ordinary agencies, we built an extraordinary ecosystem. AumVerse is not just a parent company—it's a vision. A commitment to excellence that spans creative design and business intelligence.
-                    </p>
-                    <p class="text-lg text-gray-300 leading-relaxed font-semibold">
-                        We believe that true success comes from the perfect fusion of stunning design and strategic growth. That's why we created two powerhouses under one roof.
-                    </p>
-                </div>
-                <div class="md:w-1/2 flex justify-center opacity-90">
-                      <!-- Simple visual representation of the ecosystem -->
-                    <div class="relative w-64 h-64">
-                        <div class="absolute inset-0 border-4 border-aume-blue/30 rounded-full animate-pulse-slow"></div>
-                        <div class="absolute inset-4 border-4 border-white/10 rounded-full animate-spin-slow"></div>
-                        <div class="absolute inset-0 flex items-center justify-center font-black text-2xl tracking-widest">AUMVERSE</div>
-                        <div class="absolute -top-4 left-1/2 -translate-x-1/2 glass-card px-4 py-1 rounded-full text-xs font-bold text-aume-blue">PARENT</div>
-                        <div class="absolute bottom-8 -right-8 glass-card px-4 py-2 rounded-xl text-sm font-bold">AUMEDESIGN</div>
-                        <div class="absolute bottom-8 -left-8 glass-card px-4 py-2 rounded-xl text-sm font-bold">AUMESTACK</div>
-                    </div>
-                </div>
+    </main>
+
+    <!-- Footer (Always visible) -->
+    <footer class="relative z-10 py-10 px-6 max-w-7xl mx-auto w-full grid-line-top overflow-hidden mt-auto">
+        <div class="flex flex-col lg:flex-row justify-between items-center text-steel-haze system-accent text-[10px] gap-6 relative z-10">
+            <p class="whitespace-nowrap">[ © 2024 - ALL_RIGHTS_RESERVED ]</p>
+            <div class="flex flex-wrap justify-center gap-6">
+                <a class="hover:text-neon-harvest transition-colors cursor-pointer">[ Privacy Policy ]</a>
+                <a class="hover:text-neon-harvest transition-colors cursor-pointer">[ Terms of Service ]</a>
+                <a class="hover:text-neon-harvest transition-colors cursor-pointer">[ Cookie Policy ]</a>
+                <a class="hover:text-neon-harvest transition-colors cursor-pointer">[ Earnings Disclaimer ]</a>
             </div>
-        </section>
+            <p class="whitespace-nowrap">[ STATUS: OPERATIONAL ]</p>
+        </div>
+    </footer>
 
-        <!-- WHY CHOOSE US -->
-        <section class="container mx-auto px-4 mb-32 reveal">
-            <h2 class="text-4xl md:text-5xl font-black text-center mb-16">Why the Best Choose AumVerse</h2>
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="glass-card p-8 rounded-3xl text-center">
-                    <!-- Professional Icon -->
-                    <div class="bg-aume-blue/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-aume-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                        </svg>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-4">Unmatched Expertise</h3>
-                    <p class="text-gray-400">With AUMEDESIGN's creative genius and AUMESTACK's growth intelligence, you get the complete package. Design that sells. Strategy that scales.</p>
-                </div>
-                <div class="glass-card p-8 rounded-3xl text-center md:-mt-8 border-aume-blue/50">
-                    <!-- Professional Icon -->
-                    <div class="bg-aume-blue/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-aume-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-4">Proven Results</h3>
-                    <p class="text-gray-400">Success stories, client revenue, and industry recognition. But more importantly—brands that last, businesses that thrive.</p>
-                </div>
-                <div class="glass-card p-8 rounded-3xl text-center">
-                    <!-- Professional Icon -->
-                    <div class="bg-aume-blue/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-aume-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-4">Your Success Partner</h3>
-                    <p class="text-gray-400">We don't do one-off projects. We build long-term partnerships. Your growth is our obsession. Your success is our reputation.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- FINAL CTA -->
-        <section class="container mx-auto px-4 mb-32 text-center reveal">
-            <h2 class="text-5xl md:text-7xl font-black mb-8">Ready to Join the Elite?</h2>
-            <p class="text-xl text-gray-300 max-w-2xl mx-auto mb-12">
-                Whether you need a brand that turns heads or a business that prints money (or both), AumVerse is your answer. Don't settle for ordinary. Demand extraordinary.
-            </p>
-            <div class="flex flex-col sm:flex-row justify-center gap-6">
-                 <a href="#aumestack" class="px-8 py-4 rounded-full bg-aume-blue text-lg font-bold hover:scale-105 transition-all shadow-lg shadow-aume-blue/50">
-                    Scale My Business
-                </a>
-                <a href="#aumedesign" class="px-8 py-4 rounded-full border-2 border-white text-lg font-bold hover:bg-white hover:text-black transition-all">
-                    Transform My Brand
-                </a>
-            </div>
-        </section>
-
-        <!-- CONTACT FORM SECTION -->
-        <section id="contact-section" class="container mx-auto px-4 mb-32 reveal">
-            <div class="glass-card max-w-3xl mx-auto rounded-3xl p-8 md:p-12 relative overflow-hidden">
-                <!-- Decorative blur behind form -->
-                <div class="absolute top-0 right-0 w-64 h-64 bg-aume-blue/20 rounded-full filter blur-[100px] -z-10"></div>
-
-                <div class="text-center mb-8">
-                     <!-- Static heading as requested -->
-                     <h2 class="text-4xl font-black mb-4">Let's Connect</h2>
-                     <p class="text-gray-400">Direct line to our leadership team.</p>
-                </div>
-
-                <form id="contact-form" class="space-y-6">
-                    <p class="hidden text-center p-3 rounded-lg bg-aume-blue/20 text-aume-blue font-bold" id="validation-message"></p>
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div class="space-y-2">
-                            <label for="name" class="block text-sm font-bold ml-4">Name <span class="text-aume-blue">*</span></label>
-                            <input type="text" id="name" required placeholder="John Doe" 
-                                   class="w-full px-6 py-4 rounded-2xl bg-black/50 border border-white/10 focus:border-aume-blue focus:outline-none transition-colors text-white placeholder-gray-600">
-                        </div>
-                        <div class="space-y-2">
-                            <label for="email" class="block text-sm font-bold ml-4">Email <span class="text-aume-blue">*</span></label>
-                            <input type="email" id="email" required placeholder="john@company.com" 
-                                   class="w-full px-6 py-4 rounded-2xl bg-black/50 border border-white/10 focus:border-aume-blue focus:outline-none transition-colors text-white placeholder-gray-600">
-                        </div>
-                    </div>
-                    
-                    <!-- Added Contact Number -->
-                    <div class="grid md:grid-cols-2 gap-6">
-                         <div class="space-y-2">
-                            <label for="contact-number" class="block text-sm font-bold ml-4">Contact Number <span class="text-gray-500 font-normal text-xs">(WhatsApp preferred)</span></label>
-                            <input type="tel" id="contact-number" placeholder="+91 98765 43210" 
-                                   class="w-full px-6 py-4 rounded-2xl bg-black/50 border border-white/10 focus:border-aume-blue focus:outline-none transition-colors text-white placeholder-gray-600">
-                        </div>
-                        <div class="space-y-2">
-                            <label for="city" class="block text-sm font-bold ml-4">City <span class="text-aume-blue">*</span></label>
-                            <input type="text" id="city" required placeholder="New York" 
-                                   class="w-full px-6 py-4 rounded-2xl bg-black/50 border border-white/10 focus:border-aume-blue focus:outline-none transition-colors text-white placeholder-gray-600">
-                        </div>
-                    </div>
-
-                    <div class="grid md:grid-cols-2 gap-6">
-                         <div class="space-y-2">
-                            <label for="company-name" class="block text-sm font-bold ml-4">Company Name</label>
-                            <input type="text" id="company-name" placeholder="Future Unicorn Inc." 
-                                   class="w-full px-6 py-4 rounded-2xl bg-black/50 border border-white/10 focus:border-aume-blue focus:outline-none transition-colors text-white placeholder-gray-600">
-                        </div>
-                        <div class="space-y-2">
-                            <label for="linkedin" class="block text-sm font-bold ml-4">LinkedIn Profile</label>
-                            <input type="text" id="linkedin" placeholder="linkedin.com/in/johndoe" 
-                                   class="w-full px-6 py-4 rounded-2xl bg-black/50 border border-white/10 focus:border-aume-blue focus:outline-none transition-colors text-white placeholder-gray-600">
-                        </div>
-                    </div>
-                    
-                    <!-- ACTION BUTTON -->
-                    <div class="mt-8">
-                        <button type="submit" id="whatsapp-btn" class="w-full py-4 bg-aume-blue hover:bg-blue-700 rounded-2xl font-black text-lg transition-all flex items-center justify-center gap-3">
-                            <span>Launch via WhatsApp</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
-                                <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
-                            </svg>
-                        </button>
-                    </div>
-
-                </form>
-            </div>
-        </section>
-
-        <footer class="text-center pb-10 text-gray-500 text-sm">
-            <p>© 2023 AumVerse. All rights reserved.</p>
-            <p>Architecting Futures across the Globe.</p>
-        </footer>
-
-    </div>
-
-    <!-- --- SCRIPTS --- -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- INTERACTIVITY SCRIPT -->
     <script>
-        // === PAGE LOAD & PRELOADER ===
-        window.addEventListener('load', () => {
-            // Show body content (it's behind the preloader now)
-            document.body.classList.remove('opacity-0');
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Data Models
+        const cases = [
+            { 
+                brand: "NovaCore Solutions", category: "Systems + Voice AI", 
+                problem: "Strong SaaS product but weak outreach and global lead acquisition.", 
+                built: "Inbound/Outbound Voice Agents, Custom Lead Data System", 
+                results: "13% increase in monthly sales volume.",
+                details: {
+                    problem: "NovaCore possessed a high-potential SaaS product, but their global outreach and lead acquisition were severely lagging. Their sales team was burning out on cold outreach while missing crucial inbound opportunities outside of local business hours.",
+                    intervention: "We engineered a dual-layer architecture: a custom data system to intelligently gather and score leads, paired with a personalized AI voice agent. This agent autonomously handled mass outbound qualification and seamlessly supported 24/7 inbound inquiries.",
+                    opportunity: "By automating the top of the funnel, their human reps only engaged with highly qualified, warm leads. The intelligent routing and constant availability pushed their overall sales volume up by 13% within the first month."
+                }
+            },
+            { 
+                brand: "Faris Dev", category: "Custom AI Integration", 
+                problem: "Developer-heavy team struggling with consistent client communication and project updates.", 
+                built: "Real-time Database-to-Chat Client Portal", 
+                results: "Zero missed updates, massive reduction in client anxiety.",
+                details: {
+                    problem: "Faris Dev is an elite software development firm, but their team was entirely composed of engineers. They lacked a dedicated client relations system, leading to fragmented communication, anxious clients, and developers constantly interrupted for status updates.",
+                    intervention: "We built a custom, secure chat interface that ties directly into their development databases (Jira/GitHub). As developers update tickets or push code, the system translates these into natural language, real-time updates for the client.",
+                    opportunity: "Clients now have a seamless, transparent window into their project's status 24/7. This completely eliminated manual 'checking in' emails, allowing the engineering team to maintain deep focus on core development without sacrificing client trust."
+                }
+            },
+            { 
+                brand: "PearlTech Solutions", category: "Automation + Lead Gen", 
+                problem: "Compliance risks in global packaging design and stagnant client acquisition.", 
+                built: "Automated Compliance Analyzer, Intelligent Lead Funnel", 
+                results: "Eliminated regulatory design errors, 7% sales lift in 30 days.",
+                details: {
+                    problem: "An Indian design agency managing high-volume packaging for global consumables. Consumables require strict, market-specific regulatory compliance. Manual QA was leading to costly revision cycles and the occasional non-compliant design slipping through, damaging credibility.",
+                    intervention: "We integrated an intelligent visual analysis system directly into their existing design workflow. It scans final packaging files against global compliance databases to ensure zero regulatory errors. Simultaneously, we deployed an automated lead funnel to capitalize on their newfound operational speed.",
+                    opportunity: "The compliance system fortified their market credibility by guaranteeing flawless deliverables. Leveraging this strong reputation, the intelligent lead funnel captured and converted new prospects, resulting in a solid 7% sales increase in just 30 days."
+                }
+            },
+            { 
+                brand: "Creator Hub Riyadh", category: "Content Operations", 
+                problem: "Severe margin loss due to manual scripting and planning for Middle Eastern creators.", 
+                built: "Algorithmic Content System, Layer 1 Sales Funnel", 
+                results: "Automated content planning, streamlined initial sales.",
+                details: {
+                    problem: "A premier agency handling copywriting and content strategy for creators and businesses across the Middle East. They were investing unsustainable amounts of time and capital into manual scripting, ideation, and writing, which strangled their profit margins.",
+                    intervention: "We developed a customized, automated content system that generates high-quality, culturally nuanced scripts and content plans tailored to their specific client avatars. We also implemented a Layer 1 sales system to handle their top-of-funnel inquiries.",
+                    opportunity: "The agency dramatically reduced their overhead on writing and planning, freeing up capital. The automated sales system brought in fresh, qualified prospects, creating a highly beneficial, streamlined ecosystem for the founders."
+                }
+            },
+            { 
+                brand: "Devlusion", category: "Systems + Revenue", 
+                problem: "Delivering great Shopify/e-com sites but struggling to increase average ticket size.", 
+                built: "Automated Conversion Analysis Engine", 
+                results: "18% increase in average ticket size on new deals.",
+                details: {
+                    problem: "An Indian web development agency building excellent Shopify and e-commerce platforms. However, they were hitting a revenue ceiling per client. They needed a way to deliver undeniable, data-backed value to justify higher project pricing.",
+                    intervention: "During our discovery phase, we mapped a new value proposition. We built an automated system that analyzes their newly developed web apps and landing pages specifically for conversion capability and UX friction points.",
+                    opportunity: "Armed with this system, Devlusion could now offer 'Data-Driven Conversion Audits' as a premium upsell or bundled feature. This tangible added value directly allowed them to close further deals with an 18% higher average ticket size."
+                }
+            }
+        ];
+
+        const servicesData = {
+            automation: {
+                title: "Intelligent System & Revenue Automation",
+                subtitle: "Build intelligent infrastructure. From custom LLM-powered web apps to autonomous AI voice systems and internal agents, we engineer systems that handle massive volume without breaking.",
+                cards: [
+                    { title: "Custom AI Agentic Automations", icon: "bot", desc: "Built for enterprises and creators to execute complex, repetitive operations autonomously 24/7." },
+                    { title: "Autonomous Voice Systems", icon: "mic", desc: "Inbound and outbound voice nodes that seamlessly communicate your venture's systems directly to clients." },
+                    { title: "Intelligent System Development", icon: "network", desc: "Custom architecture and web apps engineered specifically to enhance and accelerate your venture's growth." }
+                ],
+                metrics: ["Zero Manual Data Entry", "24/7 Autonomous Ops", "Infinite Scalability"]
+            },
+            synthetic: {
+                title: "Synthetic Media & Content Operations",
+                subtitle: "Scale your digital presence effortlessly. We build algorithmic content pipelines and deploy synthetic media to generate high-impact visuals and automate daily publishing.",
+                cards: [
+                    { title: "Automated Content Systems", icon: "video", desc: "Built for creators. Eliminate the headache of planning, recording, and editing regularly. Let the algorithm do the heavy lifting." },
+                    { title: "Synthetic Media Production", icon: "aperture", desc: "Ditch traditional 'lights, camera, action'. Generate AI-driven UGC and product campaigns for fast, automated widespread distribution." }
+                ],
+                metrics: ["Zero Editing Hours", "Daily Multi-Platform Output", "Hyper-Consistent Quality"]
+            },
+            brand: {
+                title: "Brand Identity & Creative Direction",
+                subtitle: "Generic branding kills conversion. We engineer elite visual identities, premium positioning, and high-performance digital environments that command immediate market authority.",
+                cards: [
+                    { title: "Brand's Creative Identity", icon: "pen-tool", desc: "Forging unforgettable, elite visual architectures that dominate specific market categories." },
+                    { title: "Design That Converts", icon: "package", desc: "Premium brand design, cohesive identity frameworks, and visual systems built purely for high ROI." },
+                    { title: "Website Design & Development", icon: "layout", desc: "In a fast-paced digital world, we build high-performance websites engineered to close high-ticket sales." }
+                ],
+                metrics: ["Command Premium Pricing", "Category Authority", "Frictionless Conversion"]
+            }
+        };
+
+        const testimonialsRow1 = [
+            { name: "Mark T.", role: "Founder, NovaCore", text: "The Aumeverse team hooked up our entire backend. I haven't looked at a spreadsheet in weeks, the leads just route themselves. Legit witchcraft." },
+            { name: "Elena R.", role: "CEO, PearlTech Solutions", text: "Sargam completely killed the new brand identity. We look so premium now that we raised prices across the board and nobody even blinked." },
+            { name: "David K.", role: "CTO, Faris Dev", text: "The Aumeverse crew built out our custom client portal faster than our in-house devs could scope it. Smooth, dark, and perfectly functional." },
+            { name: "Sarah J.", role: "Ops Lead, Aura Botanicals", text: "We deployed the voice agent Abhishek's team built for inbound calls. It handles angry customers better than half my staff. Incredible." }
+        ];
+
+        const testimonialsRow2 = [
+            { name: "Jessica W.", role: "Creator, Creator Hub", text: "I was burning out editing shorts every night. The Aumeverse team set up an AI content pipeline for us and now I literally just record and walk away." },
+            { name: "Priya M.", role: "Director, Zenith Logistics", text: "Our cart abandonment was a nightmare. The team ripped out our clunky Shopify theme and built a seamless flow. It just works." },
+            { name: "Liam O.", role: "Founder, Devlusion", text: "We thought AI agents were just hype until Abhishek deployed one in our Slack. It pulls docs instantly and answers tickets while we sleep." },
+            { name: "Omar F.", role: "CMO, Vanya Botanicals", text: "Drowning in manual CRM entry until the Aumeverse team came in. The whole system runs on autopilot now. Worth every penny." }
+        ];
+
+        // Populate Cases Marquee
+        const casesMarqueeHTML = [...cases, ...cases].map((c, idx) => `
+            <div class="min-w-[280px] md:min-w-[320px] w-[280px] md:w-[320px] group bg-void-green grid-line-all p-6 hover:border-neon-harvest transition-colors flex flex-col relative mr-6">
+                <div class="absolute bottom-3 right-3 crosshair opacity-30"></div>
+                <div class="flex justify-between items-start mb-4">
+                    <h3 class="text-xl font-bold font-display truncate pr-4">${c.brand}</h3>
+                </div>
+                <div class="space-y-3 flex-1 text-sm text-steel-haze font-sans">
+                    <div>
+                        <p class="text-polar-mist mb-1 system-accent text-[10px]">:: PROBLEM</p>
+                        <p class="leading-relaxed truncate">${c.problem}</p>
+                    </div>
+                    <div>
+                        <p class="text-polar-mist mb-1 system-accent text-[10px]">:: RESULTS</p>
+                        <p class="text-polar-mist leading-relaxed truncate">${c.results}</p>
+                    </div>
+                </div>
+                <div onclick="openCase(${idx % cases.length})" class="mt-6 pt-3 grid-line-top cursor-pointer group-hover:text-neon-harvest text-steel-haze transition-colors">
+                    <p class="font-bold system-accent text-[10px]">// View full case</p>
+                </div>
+            </div>
+        `).join('');
+        document.getElementById('cases-marquee').innerHTML = casesMarqueeHTML;
+
+        // Populate Cases Grid Page
+        const casesGridHTML = cases.map((c, idx) => `
+            <div onclick="openCase(${idx})" class="group bg-void-green grid-line-all p-8 hover:border-neon-harvest transition-colors flex flex-col relative cursor-pointer">
+                <div class="absolute bottom-4 right-4 crosshair opacity-50"></div>
+                <div class="flex justify-between items-start mb-10">
+                    <h3 class="text-3xl font-bold font-display">${c.brand}</h3>
+                    <span class="text-[10px] system-accent text-neon-harvest grid-line-all px-3 py-1">[${c.category}]</span>
+                </div>
+                <div class="space-y-8 flex-1 text-sm text-steel-haze font-sans">
+                    <div>
+                        <p class="text-polar-mist mb-2 system-accent text-[10px]">:: PROBLEM_DETECTED</p>
+                        <p class="leading-relaxed">${c.problem}</p>
+                    </div>
+                    <div>
+                        <p class="text-polar-mist mb-2 system-accent text-[10px]">:: INFRASTRUCTURE_DEPLOYED</p>
+                        <p class="leading-relaxed text-polar-mist">${c.built}</p>
+                    </div>
+                </div>
+                <div class="mt-10 pt-6 grid-line-top">
+                    <p class="text-neon-harvest mb-3 system-accent text-[10px] font-bold">:: SYSTEM_OUTCOME</p>
+                    <p class="text-xl font-medium font-sans leading-snug text-polar-mist">${c.results}</p>
+                </div>
+            </div>
+        `).join('');
+        if (document.getElementById('cases-grid')) document.getElementById('cases-grid').innerHTML = casesGridHTML;
+
+        // Populate Testimonials - Made Smaller and More Compact
+        const generateTestimonials = (arr) => [...arr, ...arr].map(t => `
+            <div class="min-w-[300px] md:min-w-[340px] w-[300px] md:w-[340px] bg-void-green p-6 grid-line-all flex flex-col justify-between mr-6 relative group hover:bg-abyss-core transition-colors">
+                <div class="absolute top-2 left-2 crosshair opacity-30"></div>
+                <div>
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 bg-abyss-core grid-line-all flex items-center justify-center font-bold font-display text-sm text-neon-harvest">${t.name[0]}</div>
+                            <h4 class="font-bold text-xs font-sans tracking-widest text-polar-mist">${t.name}</h4>
+                        </div>
+                        <div class="flex text-neon-harvest mt-1">
+                            ${Array(5).fill('<i data-lucide="star" class="w-3 h-3 ml-0.5 fill-current"></i>').join('')}
+                        </div>
+                    </div>
+                    <p class="text-steel-haze text-xs font-sans leading-relaxed mb-6 group-hover:text-polar-mist transition-colors">"${t.text}"</p>
+                </div>
+                <div class="text-right border-t border-steel-haze/20 pt-3">
+                    <p class="text-steel-haze text-[9px] system-accent">${t.role}</p>
+                </div>
+            </div>
+        `).join('');
+        
+        // Swapped Row Data as Requested
+        document.getElementById('test-row1').innerHTML = generateTestimonials(testimonialsRow2);
+        document.getElementById('test-row2').innerHTML = generateTestimonials(testimonialsRow1);
+
+        // Routing Logic
+        function navigate(pageId) {
+            document.querySelectorAll('.page-section').forEach(el => el.classList.add('hidden'));
+            document.getElementById('page-' + pageId).classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
             
-            // Keep preloader for 2.5 seconds then fade it out
-            setTimeout(() => {
-                document.getElementById('preloader-overlay').classList.add('fade-out');
-            }, 2500);
-        });
-
-        // === MENU TOGGLE LOGIC ===
-        const menuToggle = document.getElementById('menu-toggle');
-        const sideMenu = document.getElementById('side-menu');
-        const menuOverlay = document.getElementById('menu-overlay');
-        const menuLinks = document.querySelectorAll('.menu-link-wrapper');
-
-        function toggleMenu() {
-            const isOpen = document.body.classList.toggle('menu-open');
-            sideMenu.classList.toggle('translate-x-full', !isOpen);
-            menuOverlay.classList.toggle('opacity-0', !isOpen);
-            menuOverlay.classList.toggle('pointer-events-none', !isOpen);
-            
-            // Animate links
-            menuLinks.forEach((link, index) => {
-               if (isOpen) {
-                   // Delay adding 'active' to stagger them in
-                   setTimeout(() => {
-                       link.classList.remove('translate-x-10', 'opacity-0');
-                   }, index * 50); // Reduced JS delay, relying more on CSS transition delay
-               } else {
-                   link.classList.add('translate-x-10', 'opacity-0');
-               }
-            });
-        }
-
-        menuToggle.addEventListener('click', toggleMenu);
-        menuOverlay.addEventListener('click', toggleMenu);
-        // Close menu when a link is clicked
-        document.querySelectorAll('.menu-link').forEach(link => {
-            link.addEventListener('click', toggleMenu);
-        });
-
-        // === SCROLL REVEAL OBSERVER ===
-        const revealCallback = (entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
+            document.querySelectorAll('.nav-link').forEach(link => {
+                if(link.getAttribute('data-target') === pageId) {
+                    link.classList.add('text-neon-harvest');
+                    link.classList.remove('text-steel-haze');
+                } else {
+                    link.classList.add('text-steel-haze');
+                    link.classList.remove('text-neon-harvest');
                 }
             });
-        };
-        const revealObserver = new IntersectionObserver(revealCallback, { threshold: 0.15 });
-        document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+        }
+        
+        // Open Case Detail Logic
+        function openCase(index) {
+            const c = cases[index];
+            const content = `
+                <p class="text-neon-harvest system-accent text-sm mb-4">[ CASE_FILE: ${c.brand.toUpperCase()} ]</p>
+                <h1 class="text-5xl md:text-7xl font-bold tracking-tight font-display mb-6 text-polar-mist">${c.brand}</h1>
+                <div class="mb-12"><span class="text-xs font-bold tracking-widest text-abyss-core bg-neon-harvest px-3 py-1 uppercase">${c.category}</span></div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-12 grid-line-top pt-12">
+                    <div class="space-y-4">
+                        <h3 class="text-xl font-bold font-display text-polar-mist">The Bottleneck</h3>
+                        <p class="text-steel-haze font-sans text-sm leading-relaxed">${c.details.problem}</p>
+                    </div>
+                    <div class="space-y-4">
+                        <h3 class="text-xl font-bold font-display text-polar-mist">System Intervention</h3>
+                        <p class="text-steel-haze font-sans text-sm leading-relaxed">${c.details.intervention}</p>
+                    </div>
+                    <div class="space-y-4">
+                        <h3 class="text-xl font-bold font-display text-polar-mist">Revenue Opportunity</h3>
+                        <p class="text-steel-haze font-sans text-sm leading-relaxed">${c.details.opportunity}</p>
+                    </div>
+                </div>
+                
+                <div class="mt-16 bg-void-green grid-line-all p-8 border-l-4 border-l-neon-harvest relative">
+                    <div class="absolute top-2 right-2 crosshair opacity-50"></div>
+                    <div class="absolute bottom-2 right-2 crosshair opacity-50"></div>
+                    <h3 class="text-lg font-bold font-display text-polar-mist mb-2">Final Outcome</h3>
+                    <p class="text-neon-harvest font-sans text-xl leading-relaxed font-medium">${c.results}</p>
+                    <p class="text-steel-haze font-sans text-sm mt-4 system-accent text-[10px]">BUILT: ${c.built}</p>
+                </div>
+            `;
+            document.getElementById('case-detail-content').innerHTML = content;
+            navigate('case-detail');
+        }
 
-        // === 3D TILT EFFECT (Removed) ===
-        // The .tilt-card class and its corresponding JS listeners have been removed.
+        // Open Service Detail Logic (Interactive Cards Layout)
+        function openService(key) {
+            const s = servicesData[key];
+            
+            // Generate Metrics Badges
+            const metricsHtml = s.metrics.map(m => `
+                <div class="bg-abyss-core grid-line-all px-5 py-3 border-l-2 border-l-neon-harvest flex items-center gap-3 shadow-[0_0_15px_rgba(93,214,44,0.05)]">
+                    <i data-lucide="bar-chart-2" class="w-5 h-5 text-neon-harvest"></i>
+                    <span class="text-polar-mist text-sm font-bold font-sans">${m}</span>
+                </div>
+            `).join('');
 
-        // === CURSOR EFFECTS (Preserved & Optimized) ===
-        let lastSparkle = 0;
-        document.body.addEventListener('mousemove', (e) => {
-            if (Date.now() - lastSparkle < 40) return; // Throttle
-            lastSparkle = Date.now();
-            const sparkle = document.createElement('div');
-            sparkle.className = 'cursor-pop';
-            const size = Math.random() * 6 + 4;
-            sparkle.style.width = `${size}px`;
-            sparkle.style.height = `${size}px`;
-            sparkle.style.left = `${e.clientX - size/2}px`;
-            sparkle.style.top = `${e.clientY - size/2}px`;
-            sparkle.style.backgroundColor = Math.random() > 0.6 ? '#2553d6' : '#ffffff';
-            document.body.appendChild(sparkle);
-            setTimeout(() => sparkle.remove(), 800);
+            // Generate Capability Cards (More Compact)
+            const cardsHtml = s.cards.map((c, idx) => `
+                <div class="bg-void-green grid-line-all p-5 md:p-6 relative group hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(93,214,44,0.15)] hover:border-neon-harvest transition-all duration-300 cursor-default flex flex-col gap-3">
+                    <div class="absolute top-2 left-2 crosshair opacity-30"></div>
+                    <div class="absolute bottom-2 right-2 crosshair opacity-30"></div>
+                    <div class="text-neon-harvest mb-1 w-10 h-10 flex items-center justify-center rounded-full bg-neon-harvest/10 border border-neon-harvest/20 group-hover:bg-neon-harvest group-hover:text-abyss-core group-hover:shadow-[0_0_15px_rgba(93,214,44,0.5)] transition-all duration-300">
+                        <i data-lucide="${c.icon}" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
+                    </div>
+                    <h4 class="text-lg font-bold font-display text-polar-mist group-hover:text-neon-harvest transition-colors duration-300">${c.title}</h4>
+                    <p class="text-steel-haze font-sans text-xs leading-relaxed">${c.desc}</p>
+                </div>
+            `).join('');
+
+            const content = `
+                <p class="text-neon-harvest system-accent text-sm mb-4">[ ARCHITECTURE_NODE: ${key.toUpperCase()} ]</p>
+                <h1 class="text-5xl md:text-7xl font-bold tracking-tight font-display mb-6 text-polar-mist">${s.title}</h1>
+                <p class="text-steel-haze font-sans text-xl leading-relaxed max-w-4xl mb-10">${s.subtitle}</p>
+                
+                <div class="flex flex-wrap gap-4 mb-12">
+                    ${metricsHtml}
+                </div>
+                
+                <div class="pt-10 grid-line-top">
+                    <h3 class="text-2xl font-bold font-display text-polar-mist mb-8 flex items-center gap-3">
+                        <i data-lucide="layers" class="text-neon-harvest w-6 h-6"></i> Service Capabilities
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                        ${cardsHtml}
+                    </div>
+                </div>
+
+                <div class="pt-10 grid-line-top mt-4">
+                    <div class="bg-void-green grid-line-all py-6 px-6 text-center flex flex-col items-center gap-4 relative overflow-hidden">
+                        <div class="absolute top-2 left-2 crosshair opacity-50"></div>
+                        <div class="absolute bottom-2 right-2 crosshair opacity-50"></div>
+                        <h3 class="text-2xl md:text-3xl font-bold font-display text-polar-mist tracking-tighter">[ INITIALIZE_PROTOCOL ]</h3>
+                        <p class="text-steel-haze font-sans text-sm md:text-base max-w-xl">Stop losing margin to manual operations. Let's map out your custom infrastructure.</p>
+                        <button onclick="navigate('home'); setTimeout(()=>document.getElementById('connect-form-wrapper').scrollIntoView({behavior: 'smooth'}), 100);" class="mt-2 w-full md:w-auto bg-neon-harvest text-abyss-core px-8 py-3 font-bold tracking-widest text-xs hover:bg-polar-mist transition-colors shadow-[0_0_15px_rgba(93,214,44,0.3)] uppercase">
+                            [ BOOK INTRO CALL ]
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('service-detail-content').innerHTML = content;
+            lucide.createIcons(); // Re-initialize icons for the new HTML payload
+            navigate('service-detail');
+        }
+
+        // Mobile Menu Toggle
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuIcon = document.getElementById('menu-icon');
+        let menuOpen = false;
+
+        menuBtn.addEventListener('click', () => {
+            menuOpen = !menuOpen;
+            if(menuOpen) {
+                mobileMenu.classList.remove('hidden');
+                menuIcon.setAttribute('data-lucide', 'x');
+            } else {
+                mobileMenu.classList.add('hidden');
+                menuIcon.setAttribute('data-lucide', 'menu');
+            }
+            lucide.createIcons();
         });
 
-        // === TEXT ROLLER ===
-        function initRoller(id, phrases) {
-            const el = document.getElementById(id);
-            if (!el) return;
-            
-            // Clear placeholder
+        // FAQ ACCORDION LOGIC
+        const faqBtns = document.querySelectorAll('.faq-btn');
+        faqBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const content = btn.nextElementSibling;
+                const icon = btn.querySelector('.faq-icon');
+                const isOpen = !content.classList.contains('hidden');
+
+                // Close all open FAQs
+                document.querySelectorAll('.faq-content').forEach(c => c.classList.add('hidden'));
+                document.querySelectorAll('.faq-icon').forEach(i => i.style.transform = 'rotate(0deg)');
+
+                // If it wasn't open, open it and rotate its specific icon
+                if (!isOpen) {
+                    content.classList.remove('hidden');
+                    icon.style.transform = 'rotate(90deg)';
+                }
+            });
+        });
+
+        // SERVICES LETTER-BY-LETTER REVEAL EFFECT
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                } else {
+                    entry.target.classList.remove('revealed');
+                }
+            });
+        }, { rootMargin: '-20% 0px -20% 0px', threshold: 0.1 });
+
+        document.querySelectorAll('.text-reveal').forEach(el => {
+            const htmlContent = el.innerHTML;
             el.innerHTML = '';
             
-            // Populate list
-            phrases.forEach(phrase => {
-                const li = document.createElement('li');
-                li.className = 'roller-item';
-                li.textContent = phrase;
-                el.appendChild(li);
+            const lines = htmlContent.split(/(<br\s*\/?>)/gi);
+            let charIndex = 0;
+            
+            lines.forEach(line => {
+                if (line.toLowerCase().includes('<br')) {
+                    el.appendChild(document.createElement('br'));
+                } else {
+                    const words = line.split(' ');
+                    words.forEach((word, wordIndex) => {
+                        const wordSpan = document.createElement('span');
+                        wordSpan.className = 'inline-block whitespace-nowrap'; 
+                        
+                        word.split('').forEach(char => {
+                            const charSpan = document.createElement('span');
+                            charSpan.innerHTML = char;
+                            charSpan.classList.add('text-reveal-char');
+                            charSpan.style.transitionDelay = `${charIndex * 0.03}s`;
+                            wordSpan.appendChild(charSpan);
+                            charIndex++;
+                        });
+                        
+                        el.appendChild(wordSpan);
+                        
+                        if (wordIndex < words.length - 1) {
+                            const spaceSpan = document.createElement('span');
+                            spaceSpan.innerHTML = '&nbsp;';
+                            spaceSpan.classList.add('text-reveal-char');
+                            spaceSpan.style.transitionDelay = `${charIndex * 0.03}s`;
+                            el.appendChild(spaceSpan);
+                            charIndex++;
+                        }
+                    });
+                }
             });
-            
-            // Add the first item again at the end to create a seamless loop
-            const firstItem = document.createElement('li');
-            firstItem.className = 'roller-item';
-            firstItem.textContent = phrases[0];
-            el.appendChild(firstItem);
-        }
-        initRoller('dynamic-text-roller', ["Automate", "Design", "Launch", "Scale"]);
+            revealObserver.observe(el);
+        });
 
-
-        // === THREE.JS BG (Preserved) ===
-        (function initThree() {
-            const canvas = document.getElementById('bg');
-            const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-            camera.position.z = 20;
-            
-            const geometry = new THREE.BufferGeometry();
-            const count = 4000;
-            const pos = new Float32Array(count * 3);
-            const col = new Float32Array(count * 3);
-            const c1 = new THREE.Color(0x2553d6), c2 = new THREE.Color(0x444444);
-            for(let i=0; i<count*3; i+=3) {
-                pos[i] = (Math.random()-0.5)*300; pos[i+1] = (Math.random()-0.5)*300; pos[i+2] = (Math.random()-0.5)*300;
-                const c = Math.random()>0.8 ? c1 : c2;
-                col[i] = c.r; col[i+1] = c.g; col[i+2] = c.b;
-            }
-            geometry.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-            geometry.setAttribute('color', new THREE.BufferAttribute(col, 3));
-            const mat = new THREE.PointsMaterial({ size: 0.6, vertexColors: true, transparent: true, opacity: 0.6 });
-            const mesh = new THREE.Points(geometry, mat);
-            scene.add(mesh);
-
-            let mx = 0, my = 0;
-            document.addEventListener('mousemove', e => { mx = (e.clientX - window.innerWidth/2)*0.05; my = (e.clientY - window.innerHeight/2)*0.05; });
-            window.addEventListener('resize', () => { camera.aspect = window.innerWidth/window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-
-            function animate() {
-                requestAnimationFrame(animate);
-                mesh.rotation.y += 0.0005; mesh.rotation.x += 0.0002;
-                camera.position.x += (mx - camera.position.x)*0.05; camera.position.y += (-my - camera.position.y)*0.05;
-                camera.lookAt(scene.position);
-                renderer.render(scene, camera);
-            }
-            animate();
-        })();
-
-        // === CONTACT FORM HANDLERS ===
-        const getVal = (id) => document.getElementById(id).value.trim();
-        const msg = document.getElementById('validation-message');
+        // ==========================================
+        // MULTI-STEP FORM LOGIC & TIMEZONE DETECTION
+        // ==========================================
+        const form = document.getElementById('connect-form');
+        const step1 = document.getElementById('step-1');
+        const step2 = document.getElementById('step-2');
+        const btnNext = document.getElementById('btn-next');
+        const btnBack = document.getElementById('btn-back');
+        const btnSubmit = document.getElementById('btn-submit');
+        const successMsg = document.getElementById('form-success');
         
-        function validateForm() {
-            const name = getVal('name'), email = getVal('email'), city = getVal('city');
-            if (!name || !email || !city) {
-                msg.textContent = 'Please complete all required fields.';
-                msg.classList.remove('hidden', 'text-aume-blue', 'bg-aume-blue/20');
-                msg.classList.add('text-red-500', 'bg-red-500/20', 'block');
-                return false;
-            }
-            return { 
-                name, 
-                email, 
-                city, 
-                phone: getVal('contact-number') || 'N/A',
-                company: getVal('company-name') || 'N/A', 
-                linkedin: getVal('linkedin') || 'N/A' 
+        // Form Elements
+        const countrySelect = document.getElementById('country-select');
+        const stateSelect = document.getElementById('state-select');
+        const phoneInput = document.getElementById('phone-input');
+        const emailInput1 = document.getElementById('email-input-1');
+        const emailReadonly = document.getElementById('email-readonly');
+
+        // Dynamic Location Logic
+        const locationData = {
+            "United States": { code: "+1", states: ["California", "New York", "Texas", "Florida", "Illinois", "Other"] },
+            "United Kingdom": { code: "+44", states: ["England", "Scotland", "Wales", "Northern Ireland"] },
+            "Australia": { code: "+61", states: ["New South Wales", "Victoria", "Queensland", "Western Australia", "Other"] },
+            "India": { code: "+91", states: ["Maharashtra", "Delhi", "Karnataka", "Tamil Nadu", "Gujarat", "Other"] },
+            "United Arab Emirates": { code: "+971", states: ["Dubai", "Abu Dhabi", "Sharjah", "Other"] },
+            "Canada": { code: "+1", states: ["Ontario", "Quebec", "British Columbia", "Alberta", "Other"] },
+            "Other": { code: "", states: ["Other (Specify)"] }
+        };
+
+        if (countrySelect && stateSelect && phoneInput) {
+            Object.keys(locationData).forEach(country => {
+                const option = document.createElement('option');
+                option.value = country;
+                option.textContent = country;
+                countrySelect.appendChild(option);
+            });
+
+            countrySelect.addEventListener('change', (e) => {
+                const country = e.target.value;
+                stateSelect.innerHTML = '<option value="">Select State</option>'; 
+                
+                if (country && locationData[country]) {
+                    const data = locationData[country];
+                    data.states.forEach(state => {
+                        const option = document.createElement('option');
+                        option.value = state;
+                        option.textContent = state;
+                        stateSelect.appendChild(option);
+                    });
+                    phoneInput.value = data.code + " ";
+                } else {
+                    phoneInput.value = "";
+                }
+            });
+        }
+
+        // Auto-detect timezone
+        let userTimezone = 'Unknown Timezone';
+        try {
+            userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        } catch(e) {
+            console.error('Timezone detection failed', e);
+        }
+
+        if(btnNext && step1 && step2) {
+            btnNext.addEventListener('click', () => {
+                // Validate Step 1 before proceeding
+                const inputsStep1 = step1.querySelectorAll('input[required], select[required]');
+                let valid = true;
+                inputsStep1.forEach(input => {
+                    if (!input.checkValidity()) {
+                        input.reportValidity();
+                        valid = false;
+                    }
+                });
+                
+                if (valid) {
+                    if (emailReadonly && emailInput1) {
+                        emailReadonly.value = emailInput1.value;
+                    }
+                    step1.classList.add('hidden');
+                    step2.classList.remove('hidden');
+                    lucide.createIcons();
+                }
+            });
+        }
+
+        if(btnBack && step1 && step2) {
+            btnBack.addEventListener('click', () => {
+                step2.classList.add('hidden');
+                step1.classList.remove('hidden');
+            });
+        }
+
+        if(form) {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                btnSubmit.textContent = '[ SENDING DATA... ]';
+                btnSubmit.disabled = true;
+
+                // Collect form data
+                const formData = new FormData(form);
+                formData.append('timezone', userTimezone);
+
+                try {
+                    const response = await fetch('https://api.web3forms.com/submit', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (response.ok) {
+                        form.classList.add('hidden');
+                        successMsg.classList.remove('hidden');
+                    } else {
+                        throw new Error('Submission failed');
+                    }
+                } catch (error) {
+                    console.error('Form submission error:', error);
+                    btnSubmit.textContent = 'ERROR. TRY AGAIN.';
+                    btnSubmit.disabled = false;
+                }
+            });
+        }
+    </script>
+
+    <!-- Vanta.js 3D Background Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const vantaOptions = {
+                mouseControls: true,
+                touchControls: true,
+                gyroControls: false,
+                minHeight: 200.00,
+                minWidth: 200.00,
+                scale: 1.00,
+                scaleMobile: 1.00,
+                color: 0x1f5e13, /* Darker, thinner green appearance for readability */
+                backgroundColor: 0x000000, /* Abyss Core */
+                points: 7.00, /* Dramatically reduced density for very thin network look */
+                maxDistance: 24.00, /* Keep lines long but sparse */
+                spacing: 28.00, /* Widely spaced nodes */
+                showDots: true
             };
-        }
 
-        function showSuccess(text) {
-             msg.textContent = text;
-             msg.classList.remove('hidden', 'text-red-500', 'bg-red-500/20');
-             msg.classList.add('text-aume-blue', 'bg-aume-blue/20', 'block');
-             setTimeout(() => msg.classList.add('hidden'), 5000);
-             document.getElementById('contact-form').reset();
-        }
+            VANTA.NET({
+                el: "#vanta-bg",
+                ...vantaOptions
+            });
 
-        // WhatsApp Handler
-        document.getElementById('whatsapp-btn').addEventListener('click', (e) => {
-            e.preventDefault();
-            const data = validateForm();
-            if (!data) return;
-            
-            const text = `*New Inquiry from AumVerse*\n\nName: ${data.name}\nEmail: ${data.email}\nContact: ${data.phone}\nCity: ${data.city}\nCompany: ${data.company}\nLinkedIn: ${data.linkedin}`;
-            window.open(`https://wa.me/919372998318?text=${encodeURIComponent(text)}`, '_blank');
-            showSuccess('Opening WhatsApp...');
+            VANTA.NET({
+                el: "#vanta-pipeline-bg",
+                ...vantaOptions
+            });
         });
     </script>
 </body>
