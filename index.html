@@ -94,6 +94,20 @@
         .animate-marquee-left { animation: marquee-left 40s linear infinite; }
         .animate-marquee-right { animation: marquee-right 40s linear infinite; }
         .pause-on-hover:hover { animation-play-state: paused; }
+        
+        /* Chatbot Blinking Animation */
+        @keyframes chat-blink {
+            0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 20px rgba(93,214,44,0.4); }
+            50% { opacity: 0.7; transform: scale(0.95); box-shadow: 0 0 5px rgba(93,214,44,0.1); }
+        }
+        .animate-chat-blink { animation: chat-blink 3s ease-in-out infinite; }
+
+        /* Icon Pop Animation */
+        @keyframes pop-bump {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        .animate-pop-bump { animation: pop-bump 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
 
         /* Letter-by-Letter Text Reveal */
         .text-reveal-char { color: var(--steel-haze); transition: color 0.1s ease; }
@@ -235,6 +249,55 @@
 </head>
 <body class="flex flex-col min-h-screen">
 
+    <!-- GLOBAL CHATBOT WIDGET -->
+    <div class="fixed bottom-6 right-6 z-[100] flex flex-col items-end gap-4 pointer-events-none">
+        
+        <!-- Interactive Chat Interface (Hidden by Default, Rounded design) -->
+        <div id="interactive-chat" class="hidden scale-95 opacity-0 flex-col w-80 h-[26rem] bg-void-green border border-steel-haze/20 rounded-2xl shadow-2xl overflow-hidden pointer-events-auto transition-all duration-300 origin-bottom-right">
+            <div class="bg-abyss-core p-4 border-b border-steel-haze/20 flex justify-between items-center relative z-10 rounded-t-2xl">
+                <div class="flex items-center gap-3">
+                    <div class="w-2.5 h-2.5 rounded-full bg-neon-harvest animate-pulse shadow-[0_0_8px_var(--neon-harvest)]"></div>
+                    <span class="font-bold text-polar-mist text-sm font-display tracking-widest uppercase">Aume_Bot</span>
+                </div>
+                <button id="close-chat" class="text-steel-haze hover:text-neon-harvest transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            
+            <div id="chat-messages" class="flex-1 p-5 overflow-y-auto font-sans text-xs flex flex-col gap-4 bg-abyss-core/50 relative">
+                <!-- Vanta overlay feeling for chat bg -->
+                <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(93,214,44,0.03)_0%,transparent_100%)] pointer-events-none"></div>
+                
+                <div class="bg-abyss-core border border-steel-haze/20 p-3.5 rounded-2xl rounded-bl-sm self-start text-steel-haze max-w-[85%] relative z-10 leading-relaxed shadow-lg">
+                    Welcome to Aumeverse. How can I assist you in scaling your operations today?
+                </div>
+            </div>
+            
+            <div class="p-4 bg-abyss-core border-t border-steel-haze/20 flex flex-col gap-2 relative z-10 rounded-b-2xl">
+                <p class="text-[9px] text-steel-haze/70 text-center leading-tight">you could ask about the services possiblities and book meetings from here itself</p>
+                <div class="flex gap-2">
+                    <input type="text" id="chat-input" placeholder="" class="flex-1 bg-void-green border border-steel-haze/30 rounded-full text-polar-mist focus:outline-none focus:border-neon-harvest/50 text-xs px-4 py-2.5 transition-colors placeholder-steel-haze/50">
+                    <button id="chat-send" class="bg-neon-harvest/10 text-neon-harvest hover:bg-neon-harvest hover:text-abyss-core w-9 h-9 rounded-full flex items-center justify-center transition-colors border border-neon-harvest/20"><i data-lucide="send" class="w-4 h-4 flex-shrink-0"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Automated Popup Message (Disappears when chat opened) -->
+        <div id="chat-popup" class="bg-void-green border border-steel-haze/20 px-5 py-3 rounded-2xl w-max opacity-0 translate-y-4 transition-all duration-500 shadow-2xl">
+            <p class="text-polar-mist text-xs font-medium tracking-wide font-sans">Hi how may i help you ?</p>
+        </div>
+
+        <!-- Interactive Bot Icon Button -->
+        <button id="chatbot-trigger" class="w-14 h-14 bg-neon-harvest text-abyss-core rounded-full flex items-center justify-center transition-all duration-500 hover:scale-110 hover:shadow-[0_0_30px_rgba(93,214,44,0.6)] pointer-events-auto cursor-pointer shadow-[0_0_15px_rgba(93,214,44,0.3)] relative z-20 mt-2 group overflow-hidden">
+            <!-- Ambient Pulse -->
+            <div class="absolute inset-0 rounded-full animate-ping opacity-20 bg-abyss-core group-hover:opacity-0 transition-opacity duration-500"></div>
+            
+            <!-- Minimal Orbital Ring (Spins on Hover) -->
+            <div class="absolute inset-[6px] border-[1.5px] border-abyss-core/10 border-t-abyss-core/80 rounded-full group-hover:animate-[spin_2s_linear_infinite] transition-all duration-500"></div>
+            
+            <!-- Robot Core -->
+            <i data-lucide="bot" stroke-width="2" class="w-6 h-6 relative z-10 transform group-hover:scale-90 transition-transform duration-500"></i>
+        </button>
+    </div>
+
     <!-- 1. Top Navigation (Sticky & Clean/Thin) -->
     <nav class="fixed top-0 w-full z-50 bg-abyss-core/80 backdrop-blur-md grid-line-bottom">
         <div class="max-w-7xl mx-auto px-6 py-2 flex justify-between items-center relative">
@@ -242,7 +305,7 @@
             <div class="absolute bottom-0 right-6 crosshair translate-y-[50%]"></div>
 
             <!-- Mobile Centered Services Link -->
-            <button onclick="navigate('home'); setTimeout(()=>document.getElementById('services').scrollIntoView(), 100);" class="md:hidden absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-sans font-medium text-xs text-steel-haze hover:text-polar-mist transition-colors">
+            <button onclick="navigate('home', true, 'services')" class="md:hidden absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-sans font-medium text-xs text-steel-haze hover:text-polar-mist transition-colors">
                 Services
             </button>
 
@@ -261,7 +324,7 @@
                 <div class="hidden md:flex flex-grow justify-end mr-10 font-sans font-medium text-xs text-steel-haze">
                     <div class="flex gap-10 items-center">
                         <button onclick="navigate('cases')" class="hover:text-polar-mist transition-colors nav-link" data-target="cases">[ Cases ]</button>
-                        <button onclick="navigate('home'); setTimeout(()=>document.getElementById('services').scrollIntoView(), 100);" class="hover:text-polar-mist transition-colors">Services</button>
+                        <button onclick="navigate('home', true, 'services')" class="hover:text-polar-mist transition-colors">Services</button>
                         <button onclick="navigate('products')" class="hover:text-polar-mist transition-colors nav-link" data-target="products">Product</button>
                     </div>
                 </div>
@@ -269,7 +332,7 @@
             
             <div class="hidden md:block">
                 <!-- Clean Normal Button applied here -->
-                <button onclick="document.getElementById('connect-form-wrapper').scrollIntoView({behavior: 'smooth'})" class="bg-neon-harvest text-abyss-core px-6 py-2.5 font-bold text-xs font-sans hover:bg-polar-mist transition-colors shadow-[0_0_10px_rgba(93,214,44,0.2)]">
+                <button onclick="navigate('home', true, 'connect-form-wrapper')" class="bg-neon-harvest text-abyss-core px-6 py-2.5 font-bold text-xs font-sans hover:bg-polar-mist transition-colors shadow-[0_0_10px_rgba(93,214,44,0.2)]">
                     Book Intro Call
                 </button>
             </div>
@@ -281,11 +344,11 @@
         <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden md:hidden bg-abyss-core grid-line-top p-6 space-y-6 font-sans font-medium text-xs mt-[52px] relative z-40">
             <button onclick="navigate('cases'); document.getElementById('mobile-menu-btn').click();" class="block text-steel-haze hover:text-neon-harvest w-full text-left">[ Cases ]</button>
-            <button onclick="navigate('home'); setTimeout(()=>document.getElementById('services').scrollIntoView(), 100); document.getElementById('mobile-menu-btn').click();" class="block text-steel-haze hover:text-polar-mist w-full text-left">Services</button>
+            <button onclick="navigate('home', true, 'services'); document.getElementById('mobile-menu-btn').click();" class="block text-steel-haze hover:text-polar-mist w-full text-left">Services</button>
             <button onclick="navigate('products'); document.getElementById('mobile-menu-btn').click();" class="block text-steel-haze hover:text-neon-harvest w-full text-left">Product</button>
             
             <!-- Mobile Clean Button -->
-            <button onclick="document.getElementById('connect-form-wrapper').scrollIntoView({behavior: 'smooth'}); document.getElementById('mobile-menu-btn').click();" class="w-full bg-neon-harvest text-abyss-core py-3 mt-4 font-bold text-xs font-sans hover:bg-polar-mist transition-colors">
+            <button onclick="navigate('home', true, 'connect-form-wrapper'); document.getElementById('mobile-menu-btn').click();" class="w-full bg-neon-harvest text-abyss-core py-3 mt-4 font-bold text-xs font-sans hover:bg-polar-mist transition-colors">
                 Book Intro Call
             </button>
         </div>
@@ -324,7 +387,7 @@
                         <div class="flex flex-col sm:flex-row gap-5 justify-start items-center relative z-20 mt-4">
                             
                             <!-- Custom Uiverse Btn-2 -->
-                            <button onclick="document.getElementById('connect-form-wrapper').scrollIntoView({behavior: 'smooth'})" class="custom-btn btn-2 w-full sm:w-auto">
+                            <button onclick="navigate('home', true, 'connect-form-wrapper')" class="custom-btn btn-2 w-full sm:w-auto">
                                 Book an Intro Call
                             </button>
                             
@@ -346,7 +409,7 @@
                         <p class="system-accent text-[10px] text-neon-harvest">[ DESIGN + AUTOMATION = REVENUE ]</p>
                     </div>
                     <button onclick="navigate('cases')" class="text-steel-haze hover:text-neon-harvest transition-colors font-sans flex items-center gap-2 font-medium text-sm">
-                        View Cases --
+                        View Cases <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
                     </button>
                 </div>
 
@@ -827,7 +890,7 @@
         <!-- ================= SERVICE DETAIL PAGE ================= -->
         <div id="page-service-detail" class="page-section hidden px-6 py-20 max-w-7xl mx-auto w-full flex-grow relative">
             <div class="absolute top-10 left-0 crosshair"></div>
-            <button onclick="navigate('home'); setTimeout(()=>document.getElementById('services').scrollIntoView(), 100);" class="text-steel-haze hover:text-neon-harvest font-sans text-xs font-bold mb-8 flex items-center gap-2 transition-colors">
+            <button onclick="navigate('home', true, 'services')" class="text-steel-haze hover:text-neon-harvest font-sans text-xs font-bold mb-8 flex items-center gap-2 transition-colors">
                 <i data-lucide="chevron-left" class="w-3 h-3"></i> RETURN TO ARCHITECTURE
             </button>
             <div id="service-detail-content"></div>
@@ -1043,12 +1106,25 @@
         document.getElementById('test-row1').innerHTML = generateTestimonials(testimonialsRow2);
         document.getElementById('test-row2').innerHTML = generateTestimonials(testimonialsRow1);
 
-        // Routing Logic
-        function navigate(pageId) {
+        // Routing Logic with History API Support
+        function navigate(pageId, addToHistory = true, targetElementId = null) {
             document.querySelectorAll('.page-section').forEach(el => el.classList.add('hidden'));
-            document.getElementById('page-' + pageId).classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            const targetPage = document.getElementById('page-' + pageId);
+            if (targetPage) {
+                targetPage.classList.remove('hidden');
+            }
             
+            // Handle scrolling
+            if (targetElementId) {
+                setTimeout(() => {
+                    const targetEl = document.getElementById(targetElementId);
+                    if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+            } else {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+            
+            // Update active nav link states
             document.querySelectorAll('.nav-link').forEach(link => {
                 if(link.getAttribute('data-target') === pageId) {
                     link.classList.add('text-neon-harvest');
@@ -1058,7 +1134,44 @@
                     link.classList.remove('text-neon-harvest');
                 }
             });
+
+            // Handle History API
+            if (addToHistory) {
+                const hash = targetElementId ? `#${pageId}?section=${targetElementId}` : `#${pageId}`;
+                history.pushState({ pageId, targetElementId }, '', hash);
+            }
+            
+            // Re-initialize icons just in case
+            lucide.createIcons();
         }
+
+        // Initialize history state on load
+        window.addEventListener('DOMContentLoaded', () => {
+            const hash = window.location.hash;
+            if (hash) {
+                const parts = hash.replace('#', '').split('?section=');
+                const pageId = parts[0];
+                const targetElementId = parts[1] || null;
+                
+                if (document.getElementById('page-' + pageId)) {
+                    navigate(pageId, false, targetElementId);
+                    history.replaceState({ pageId, targetElementId }, '', hash);
+                } else {
+                    history.replaceState({ pageId: 'home', targetElementId: null }, '', '#home');
+                }
+            } else {
+                history.replaceState({ pageId: 'home', targetElementId: null }, '', '#home');
+            }
+        });
+
+        // Handle browser back/forward buttons
+        window.addEventListener('popstate', (event) => {
+            if (event.state && event.state.pageId) {
+                navigate(event.state.pageId, false, event.state.targetElementId);
+            } else {
+                navigate('home', false);
+            }
+        });
         
         // Open Case Detail Logic
         function openCase(index) {
@@ -1144,7 +1257,7 @@
                         <div class="absolute bottom-2 right-2 crosshair opacity-50"></div>
                         <h3 class="text-2xl md:text-3xl font-bold font-display text-polar-mist tracking-tighter">[ INITIALIZE_PROTOCOL ]</h3>
                         <p class="text-steel-haze font-sans text-sm md:text-base max-w-xl">Stop losing margin to manual operations. Let's map out your custom infrastructure.</p>
-                        <button onclick="navigate('home'); setTimeout(()=>document.getElementById('connect-form-wrapper').scrollIntoView({behavior: 'smooth'}), 100);" class="mt-2 w-full md:w-auto bg-neon-harvest text-abyss-core px-8 py-3 font-bold tracking-widest text-xs hover:bg-polar-mist transition-colors shadow-[0_0_15px_rgba(93,214,44,0.3)] uppercase">
+                        <button onclick="navigate('home', true, 'connect-form-wrapper')" class="mt-2 w-full md:w-auto bg-neon-harvest text-abyss-core px-8 py-3 font-bold tracking-widest text-xs hover:bg-polar-mist transition-colors shadow-[0_0_15px_rgba(93,214,44,0.3)] uppercase">
                             [ BOOK INTRO CALL ]
                         </button>
                     </div>
@@ -1193,6 +1306,134 @@
                 }
             });
         });
+
+        // ==========================================
+        // INTERACTIVE CHATBOT LOGIC
+        // ==========================================
+        const chatTrigger = document.getElementById('chatbot-trigger');
+        const interactiveChat = document.getElementById('interactive-chat');
+        const closeChat = document.getElementById('close-chat');
+        const chatPopupMsg = document.getElementById('chat-popup');
+        const chatInput = document.getElementById('chat-input');
+        const chatSend = document.getElementById('chat-send');
+        const chatMessages = document.getElementById('chat-messages');
+
+        // Custom Typing Placeholder Logic
+        const placeholders = [
+            "what service does aumeverse provides?",
+            "how do i integrate intelligent system ?",
+            "what are ai agents ?"
+        ];
+        let pIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        
+        function typePlaceholder() {
+            const currentText = placeholders[pIndex];
+            
+            if (isDeleting) {
+                chatInput.placeholder = currentText.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                chatInput.placeholder = currentText.substring(0, charIndex + 1);
+                charIndex++;
+            }
+            
+            let typeSpeed = isDeleting ? 30 : 70;
+            
+            if (!isDeleting && charIndex === currentText.length) {
+                typeSpeed = 2000; // Pause at the end
+                isDeleting = true;
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                pIndex = (pIndex + 1) % placeholders.length;
+                typeSpeed = 500; // Pause before starting new word
+            }
+            
+            setTimeout(typePlaceholder, typeSpeed);
+        }
+        
+        // Start typing effect for placeholder
+        setTimeout(typePlaceholder, 1000);
+
+        // Auto-show popup bubble every 10 seconds
+        setInterval(() => {
+            if(chatPopupMsg && interactiveChat.classList.contains('hidden')) {
+                chatPopupMsg.classList.remove('opacity-0', 'translate-y-4');
+                chatPopupMsg.classList.add('opacity-100', 'translate-y-0');
+                
+                // Add pop-bump animation to the bot icon
+                chatTrigger.classList.add('animate-pop-bump');
+                setTimeout(() => {
+                    chatTrigger.classList.remove('animate-pop-bump');
+                }, 400);
+                
+                setTimeout(() => {
+                    chatPopupMsg.classList.remove('opacity-100', 'translate-y-0');
+                    chatPopupMsg.classList.add('opacity-0', 'translate-y-4');
+                }, 4000); // 4 seconds visible
+            }
+        }, 10000);
+
+        // Open chat window
+        chatTrigger.addEventListener('click', () => {
+            if (interactiveChat.classList.contains('hidden')) {
+                interactiveChat.classList.remove('hidden');
+                interactiveChat.classList.add('flex');
+                setTimeout(() => {
+                    interactiveChat.classList.remove('scale-95', 'opacity-0');
+                    interactiveChat.classList.add('scale-100', 'opacity-100');
+                }, 10);
+            } else {
+                interactiveChat.classList.remove('scale-100', 'opacity-100');
+                interactiveChat.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => {
+                    interactiveChat.classList.add('hidden');
+                    interactiveChat.classList.remove('flex');
+                }, 300);
+            }
+            if(chatPopupMsg) chatPopupMsg.style.display = 'none'; // Permanently hide popup logic
+        });
+
+        // Close chat window
+        closeChat.addEventListener('click', () => {
+            interactiveChat.classList.remove('scale-100', 'opacity-100');
+            interactiveChat.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                interactiveChat.classList.add('hidden');
+                interactiveChat.classList.remove('flex');
+            }, 300);
+        });
+
+        // Send message logic
+        function sendChatMessage() {
+            const msg = chatInput.value.trim();
+            if(!msg) return;
+
+            // Append User Message
+            const userBubble = document.createElement('div');
+            userBubble.className = 'bg-neon-harvest/10 border border-neon-harvest/30 p-3.5 rounded-2xl rounded-tr-sm self-end text-polar-mist max-w-[85%] relative z-10 leading-relaxed shadow-lg';
+            userBubble.textContent = msg;
+            chatMessages.appendChild(userBubble);
+            
+            chatInput.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Simulated Bot Reply
+            setTimeout(() => {
+                const botBubble = document.createElement('div');
+                botBubble.className = 'bg-abyss-core border border-steel-haze/20 p-3.5 rounded-2xl rounded-bl-sm self-start text-steel-haze max-w-[85%] relative z-10 leading-relaxed shadow-lg';
+                botBubble.innerHTML = `Query received. To build your custom infrastructure or discuss operations, please <button onclick="navigate('home', true, 'connect-form-wrapper')" class="text-neon-harvest underline font-bold">book an intro call</button>.`;
+                chatMessages.appendChild(botBubble);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 1200);
+        }
+
+        chatSend.addEventListener('click', sendChatMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') sendChatMessage();
+        });
+
 
         // SERVICES LETTER-BY-LETTER REVEAL EFFECT
         const revealObserver = new IntersectionObserver((entries) => {
