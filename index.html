@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aumeverse | System & Revenue Automation</title>
+    <title>Aumeverse | System & Scale Architecture</title>
     
     <!-- Google Fonts: Space Grotesk (Headings) & Inter (Body) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -329,14 +329,14 @@
                         <!-- Typography overhaul: Elegant text shadows, background dimming handles the contrast -->
                         <h1 class="text-5xl sm:text-7xl md:text-[6rem] font-bold tracking-tight font-display mb-8 leading-[1.05] drop-shadow-2xl [text-shadow:0_4px_16px_rgba(0,0,0,0.8)]">
                             We design and automate <br class="hidden md:block" />
-                            <span class="text-steel-haze">operations to </span> 
+                            <span class="text-steel-haze">operations for </span> 
                             <span class="text-polar-mist" style="text-shadow: 0 0 30px rgba(255,255,255,0.15), 0 4px 16px rgba(0,0,0,0.8);">
-                                increase revenue.
+                                autonomous scale.
                             </span>
                         </h1>
                         
                         <p class="text-polar-mist text-lg md:text-2xl max-w-3xl mb-12 leading-relaxed font-sans drop-shadow-lg [text-shadow:0_2px_8px_rgba(0,0,0,0.9)]">
-                            We connect the dots and integrate the intelligent systems required to scale in the new era
+                            Connecting the dots and integrating intelligent systems required to scale in the new era .
                         </p>
 
                         <div class="flex flex-col sm:flex-row gap-5 justify-start items-center relative z-20 mt-4">
@@ -396,7 +396,7 @@
                     <!-- Service Pillar 1 -->
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-8 grid-line-bottom py-12 px-4 md:px-0 first:border-t-0">
                         <div class="md:col-span-4 flex items-start">
-                            <h3 class="text-3xl font-bold tracking-tight text-reveal leading-tight font-display">Intelligent System and Revenue Automation</h3>
+                            <h3 class="text-3xl font-bold tracking-tight text-reveal leading-tight font-display">Intelligent System and Scale Architecture</h3>
                         </div>
                         <div class="md:col-span-8 border-l border-steel-haze/20 pl-8 md:pl-12 flex flex-col justify-start pt-2">
                             <ul class="space-y-2 text-steel-haze text-sm font-sans mb-8 list-none">
@@ -436,7 +436,7 @@
                             <ul class="space-y-2 text-steel-haze text-sm font-sans mb-8 list-none">
                                 <li><span class="text-neon-harvest font-bold mr-2">::</span>Elite brand positioning & identity</li>
                                 <li><span class="text-neon-harvest font-bold mr-2">::</span>High-ROI brand design & visual systems</li>
-                                <li><span class="text-neon-harvest font-bold mr-2">::</span>Web development for high-ticket conversions</li>
+                                <li><span class="text-neon-harvest font-bold mr-2">::</span>Web development for market authority</li>
                             </ul>
                             <button onclick="openService('brand')" class="text-neon-harvest font-sans font-bold text-sm opacity-80 hover:opacity-100 transition-opacity hover:underline underline-offset-4 self-start">
                                 // Know more
@@ -480,7 +480,7 @@
                     <div class="bg-void-green border border-steel-haze/20 p-5 md:p-6 flex flex-col gap-2">
                         <span class="text-neon-harvest font-display font-bold text-lg">[ 04 ]</span>
                         <h3 class="text-polar-mist font-display font-bold text-base uppercase tracking-wider">Autonomy<br><span class="text-steel-haze text-xs tracking-normal capitalize">(Launch)</span></h3>
-                        <p class="text-steel-haze font-sans text-xs leading-relaxed">Systems go live. Watch your manual hours drop to zero while revenue scales autonomously.</p>
+                        <p class="text-steel-haze font-sans text-xs leading-relaxed">Achieve operational autonomy and realize compounding systemic growth. Zero manual friction.</p>
                     </div>
                 </div>
             </section>
@@ -941,7 +941,7 @@
 
         const servicesData = {
             automation: {
-                title: "Intelligent System & Revenue Automation",
+                title: "Intelligent System & Scale Architecture",
                 subtitle: "Build intelligent infrastructure. From custom LLM-powered web apps to autonomous AI voice systems and internal agents, we engineer systems that handle massive volume without breaking.",
                 cards: [
                     { title: "Custom AI Agentic Automations", icon: "bot", desc: "Built for enterprises and creators to execute complex, repetitive operations autonomously 24/7." },
@@ -965,7 +965,7 @@
                 cards: [
                     { title: "Brand's Creative Identity", icon: "pen-tool", desc: "Forging unforgettable, elite visual architectures that dominate specific market categories." },
                     { title: "Design That Converts", icon: "package", desc: "Premium brand design, cohesive identity frameworks, and visual systems built purely for high ROI." },
-                    { title: "Website Design & Development", icon: "layout", desc: "In a fast-paced digital world, we build high-performance websites engineered to close high-ticket sales." }
+                    { title: "Website Design & Development", icon: "layout", desc: "In a fast-paced digital world, we build high-performance websites engineered to establish market authority and close high-ticket sales." }
                 ],
                 metrics: ["Command Premium Pricing", "Category Authority", "Frictionless Conversion"]
             }
@@ -1278,6 +1278,58 @@
                     icon.style.transform = 'rotate(90deg)';
                 }
             });
+        });
+
+        // SERVICES LETTER-BY-LETTER REVEAL EFFECT
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                } else {
+                    entry.target.classList.remove('revealed');
+                }
+            });
+        }, { rootMargin: '-20% 0px -20% 0px', threshold: 0.1 });
+
+        document.querySelectorAll('.text-reveal').forEach(el => {
+            const htmlContent = el.innerHTML;
+            el.innerHTML = '';
+            
+            const lines = htmlContent.split(/(<br\s*\/?>)/gi);
+            let charIndex = 0;
+            
+            lines.forEach(line => {
+                if (line.toLowerCase().includes('<br')) {
+                    el.appendChild(document.createElement('br'));
+                } else {
+                    const words = line.split(' ');
+                    words.forEach((word, wordIndex) => {
+                        const wordSpan = document.createElement('span');
+                        wordSpan.className = 'inline-block whitespace-nowrap'; 
+                        
+                        word.split('').forEach(char => {
+                            const charSpan = document.createElement('span');
+                            charSpan.innerHTML = char;
+                            charSpan.classList.add('text-reveal-char');
+                            charSpan.style.transitionDelay = `${charIndex * 0.03}s`;
+                            wordSpan.appendChild(charSpan);
+                            charIndex++;
+                        });
+                        
+                        el.appendChild(wordSpan);
+                        
+                        if (wordIndex < words.length - 1) {
+                            const spaceSpan = document.createElement('span');
+                            spaceSpan.innerHTML = '&nbsp;';
+                            spaceSpan.classList.add('text-reveal-char');
+                            spaceSpan.style.transitionDelay = `${charIndex * 0.03}s`;
+                            el.appendChild(spaceSpan);
+                            charIndex++;
+                        }
+                    });
+                }
+            });
+            revealObserver.observe(el);
         });
 
         // ==========================================
