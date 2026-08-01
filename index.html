@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Singularity — Coming Soon</title>
+<title>Aumeverse — Coming Soon</title>
 <style>
   :root {
     --page-bg-1: #e9e3ec;
@@ -139,12 +139,27 @@
     flex-shrink: 0;
   }
 
+  .brand-text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
   .brand-name {
     font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.32em;
     color: var(--text-primary);
     text-transform: uppercase;
+    line-height: 1;
+  }
+
+  .brand-tagline {
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    color: var(--text-faint);
+    line-height: 1;
   }
 
   .center-block {
@@ -286,7 +301,10 @@
       <div class="content">
         <div class="brand">
           <span class="brand-mark"></span>
-          <span class="brand-name">Singularity</span>
+          <div class="brand-text">
+            <span class="brand-name">Aumeverse</span>
+            <span class="brand-tagline">Building intelligent systems</span>
+          </div>
         </div>
 
         <div class="center-block">
